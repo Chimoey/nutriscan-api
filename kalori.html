@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriScan - Pencari Kalori & AI Resep</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; padding: 0; background-color: #08110b; background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px); background-size: 40px 40px; color: #e2e8f0; font-family: 'Inter', sans-serif; min-height: 100vh; }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .badge-top { display: inline-flex; align-items: center; gap: 8px; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); color: #86efac; padding: 6px 16px; border-radius: 20px; font-size: 12px; margin-bottom: 20px; }
+        .badge-top .dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e; }
+        .logo-title { font-size: 36px; font-weight: 700; color: #ffffff; display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 0 15px 0; letter-spacing: -0.5px; }
+        .logo-icon { background: #22c55e; color: #08110b; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .subtitle { color: #94a3b8; font-size: 15px; max-width: 500px; margin: 0 auto; line-height: 1.6; }
+        .search-wrapper { display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+        .search-box { display: flex; align-items: center; background: #0f1c16; border: 1px solid #1f2e24; padding: 8px 8px 8px 20px; border-radius: 50px; width: 100%; max-width: 600px; transition: 0.3s; }
+        .search-box:focus-within { border-color: #22c55e; box-shadow: 0 0 15px rgba(34, 197, 94, 0.15); }
+        .search-box input { flex: 1; background: transparent; border: none; color: white; font-size: 16px; outline: none; padding: 10px; font-family: 'Inter', sans-serif; }
+        .search-box input::placeholder { color: #64748b; }
+        .btn-cari { background: #22c55e; color: #08110b; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; }
+        .btn-cari:hover { background: #16a34a; transform: scale(1.02); }
+        .chips-container { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 40px; }
+        .chip { background: transparent; border: 1px solid #1f2e24; color: #94a3b8; padding: 6px 16px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: 0.2s; }
+        .chip:hover { border-color: #22c55e; color: #22c55e; }
+        .status-text { color: #94a3b8; font-size: 14px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .grid-hasil { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .card { background: #0f1c16; border: 1px solid #1f2e24; border-radius: 16px; padding: 20px; cursor: pointer; transition: 0.3s; }
+        .card:hover { border-color: #22c55e; transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .card-title { font-size: 18px; font-weight: 600; color: #fff; margin: 0; }
+        .porsi-badge { background: rgba(255,255,255,0.05); color: #94a3b8; padding: 4px 10px; border-radius: 12px; font-size: 12px; }
+        .nutrisi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .nutrisi-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; display: flex; align-items: center; gap: 10px; }
+        .nutrisi-icon { font-size: 18px; }
+        .nutrisi-info div:first-child { font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
+        .nutrisi-info div:last-child { font-size: 15px; font-weight: 700; color: #f8fafc; }
+        .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #1f2e24; padding-top: 15px; color: #22c55e; font-size: 14px; font-weight: 500; }
+        .card-footer span.arrow { background: rgba(34, 197, 94, 0.1); width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-content { background: #0f1c16; width: 90%; max-width: 550px; border-radius: 20px; padding: 30px; position: relative; max-height: 85vh; overflow-y: auto; border: 1px solid #1f2e24; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .close-btn { position: absolute; top: 20px; right: 20px; font-size: 24px; cursor: pointer; color: #64748b; background: none; border: none; }
+        .close-btn:hover { color: #ef4444; }
+        .resep-title { font-size: 22px; color: #fff; font-weight: 700; margin-bottom: 15px; border-bottom: 1px solid #1f2e24; padding-bottom: 15px; }
+        .badges { display: flex; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; }
+        .badge { background: rgba(34, 197, 94, 0.1); color: #4ade80; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .section-title { font-size: 12px; color: #22c55e; font-weight: 700; margin: 20px 0 10px 0; text-transform: uppercase; letter-spacing: 1px; }
+        .resep-list { padding-left: 20px; margin: 0; font-size: 14px; color: #cbd5e1; line-height: 1.8; }
+        .tips-box { background: rgba(234, 179, 8, 0.1); border-left: 4px solid #eab308; padding: 15px; margin-top: 25px; border-radius: 0 8px 8px 0; font-size: 13px; color: #fde047; line-height: 1.6; }
+        .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid #22c55e; border-radius: 50%; animation: putar 1s linear infinite; margin: 30px auto; }
+        @keyframes putar { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-text { text-align: center; color: #94a3b8; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="badge-top"><div class="dot"></div> Terkoneksi FatSecret API · Resep oleh Groq AI</div>
+            <h1 class="logo-title"><div class="logo-icon">🌿</div> NutriScan</h1>
+            <p class="subtitle">Cari kandungan gizi makanan Nusantara secara instan, lalu dapatkan resep sehat yang diracik khusus oleh AI.</p>
+        </div>
+
+        <div class="search-wrapper">
+            <div class="search-box">
+                <span style="color: #64748b; margin-right: 5px;">🔍</span>
+                <input type="text" id="inputMakanan" placeholder="Ketik nama makanan (mis: Nasi Goreng)" onkeypress="if(event.key === 'Enter') cariKeBackend()">
+                <button class="btn-cari" onclick="cariKeBackend()">Cari Data</button>
+            </div>
+        </div>
+
+        <div class="chips-container">
+            <button class="chip" onclick="setPencarian('Nasi Goreng')">Nasi Goreng</button>
+            <button class="chip" onclick="setPencarian('Rendang')">Rendang</button>
+            <button class="chip" onclick="setPencarian('Soto Ayam')">Soto Ayam</button>
+            <button class="chip" onclick="setPencarian('Gado-Gado')">Gado-Gado</button>
+        </div>
+
+        <div id="statusTeks" class="status-text" style="display: none;">🗄️ Ditemukan hasil — klik kartu untuk resepnya</div>
+        <div id="tempatHasil" class="grid-hasil"></div>
+    </div>
+
+    <div class="modal-overlay" id="modalResep" onclick="tutupModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="tutupModal(event, true)">×</button>
+            <div id="isiModal"></div>
+        </div>
+    </div>
+
+    <script>
+        function setPencarian(nama) {
+            document.getElementById("inputMakanan").value = nama;
+            cariKeBackend();
+        }
+
+        async function cariKeBackend() {
+            const namaMakanan = document.getElementById("inputMakanan").value;
+            const tempatHasil = document.getElementById("tempatHasil");
+            const statusTeks = document.getElementById("statusTeks");
+            if(!namaMakanan) return;
+
+            statusTeks.style.display = 'none';
+            tempatHasil.innerHTML = `<div style="grid-column: 1/-1;"><div class="spinner"></div><div class="loading-text">Menyinkronkan data gizi...</div></div>`; 
+
+            try {
+                const response = await fetch(`/api/cari?makanan=${namaMakanan}`);
+                const data = await response.json();
+                tempatHasil.innerHTML = "";
+
+                if (data.foods && data.foods.food) {
+                    statusTeks.style.display = 'flex';
+                    let daftarMakanan = data.foods.food;
+                    if (!Array.isArray(daftarMakanan)) daftarMakanan = [daftarMakanan];
+
+                    daftarMakanan.forEach(item => {
+                        const gizi = item.food_description;
+                        let kalori = "-", lemak = "-", karbo = "-", protein = "-", porsi = "1 porsi";
+                        try {
+                            const pMatch = gizi.split('-'); if(pMatch.length > 0) porsi = pMatch[0].trim();
+                            const kalMatch = gizi.match(/Kalori:\s*([\d.]+k?kal)/i); if(kalMatch) kalori = kalMatch[1];
+                            const lemMatch = gizi.match(/Lemak:\s*([\d.]+g)/i); if(lemMatch) lemak = lemMatch[1];
+                            const karMatch = gizi.match(/Karbo:\s*([\d.]+g)/i); if(karMatch) karbo = karMatch[1];
+                            const proMatch = gizi.match(/Protein:\s*([\d.]+g)/i); if(proMatch) protein = proMatch[1];
+                        } catch(e) {}
+
+                        const card = document.createElement('div');
+                        card.className = 'card';
+                        card.onclick = () => tampilResep(item.food_name, gizi);
+
+                        card.innerHTML = `
+                            <div class="card-header"><h3 class="card-title">${item.food_name}</h3><span class="porsi-badge">${porsi}</span></div>
+                            <div class="nutrisi-grid">
+                                <div class="nutrisi-box"><div class="nutrisi-icon">🔥</div><div class="nutrisi-info"><div>Kalori</div><div>${kalori}</div></div></div>
+                                <div class="nutrisi-box"><div class="nutrisi-icon">💧</div><div class="nutrisi-info"><div>Lemak</div><div>${lemak}</div></div></div>
+                                <div class="nutrisi-box"><div class="nutrisi-icon">🌾</div><div class="nutrisi-info"><div>Karbo</div><div>${karbo}</div></div></div>
+                                <div class="nutrisi-box"><div class="nutrisi-icon">🥩</div><div class="nutrisi-info"><div>Protein</div><div>${protein}</div></div></div>
+                            </div>
+                            <div class="card-footer"><span>Lihat resep AI</span><span class="arrow">→</span></div>
+                        `;
+                        tempatHasil.appendChild(card);
+                    });
+                } else {
+                    tempatHasil.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#ef4444; padding:20px;">Data tidak ditemukan.</div>`;
+                }
+            } catch (error) {
+                tempatHasil.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#ef4444; padding:20px;">Gagal terhubung ke server!</div>`;
+            }
+        }
+
+        async function tampilResep(nama, gizi) {
+            const modal = document.getElementById('modalResep');
+            const isiModal = document.getElementById('isiModal');
+            modal.style.display = 'flex';
+            isiModal.innerHTML = `<div class="spinner"></div><div class="loading-text">Menyiapkan wajan virtual untuk ${nama}...</div>`;
+
+            try {
+                const response = await fetch('/api/resep', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ namaMakanan: nama, deskripsiGizi: gizi })
+                });
+                const data = await response.json();
+                
+                if (data.sukses && data.resep) {
+                    const r = data.resep;
+                    isiModal.innerHTML = `
+                        <div class="resep-title">🍳 ${r.nama_resep}</div>
+                        <div class="badges">
+                            <span class="badge">⏱️ ${r.waktu_masak}</span>
+                            <span class="badge">👥 ${r.porsi}</span>
+                            <span class="badge">📊 ${r.tingkat_kesulitan}</span>
+                        </div>
+                        <div class="section-title">🛒 BAHAN-BAHAN</div>
+                        <ul class="resep-list">${r.bahan.map(b => `<li>${b}</li>`).join('')}</ul>
+                        <div class="section-title">👨‍🍳 LANGKAH MEMASAK</div>
+                        <ol class="resep-list">${r.langkah.map(l => `<li>${l}</li>`).join('')}</ol>
+                        <div class="tips-box"><strong>💡 Tips Anak Kos:</strong> ${r.tips_sehat}</div>
+                    `;
+                } else {
+                    isiModal.innerHTML = `<div style="color:#ef4444; text-align:center;">Gagal memuat resep AI.</div>`;
+                }
+            } catch (error) {
+                isiModal.innerHTML = `<div style="color:#ef4444; text-align:center;">Server backend mati.</div>`;
+            }
+        }
+
+        function tutupModal(event, force = false) {
+            if (force || event.target.id === 'modalResep') { document.getElementById('modalResep').style.display = 'none'; }
+        }
+    </script>
+</body>
+</html>
