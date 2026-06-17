@@ -27,34 +27,59 @@
         #error-msg { color: #ef4444; margin-top: 20px; font-size: 16px; display: none; text-align: center; background: rgba(239, 68, 68, 0.1); padding: 15px; border-radius: 10px; border: 1px solid rgba(239, 68, 68, 0.2); max-width: 600px; width: 100%; }
         #loading { color: #22c55e; margin-top: 20px; font-size: 16px; display: none; }
         
-        /* Layout Hasil & Keranjang (Di Atas) */
-        .app-layout { display: flex; gap: 20px; max-width: 1000px; width: 100%; flex-wrap: wrap; justify-content: center; align-items: flex-start; margin-bottom: 40px;}
+        /* --- LAYOUT GRID MENYAMPING --- */
+        .app-layout { 
+            display: grid; 
+            grid-template-columns: 1.5fr 1fr; /* Kolom kiri lebih lebar */
+            gap: 20px; 
+            max-width: 1100px; 
+            width: 100%; 
+            align-items: start; /* Supaya tinggi kotak nggak saling narik */
+            margin-bottom: 40px;
+        }
+
+        /* Responsif: kalau layar HP, balik jadi atas-bawah */
+        @media (max-width: 768px) {
+            .app-layout { grid-template-columns: 1fr; }
+            #cart-section { position: static !important; }
+        }
         
-        #result { width: 100%; max-width: 500px; background: #111827; padding: 20px; border-radius: 15px; border: 1px solid #334155; display: none; }
+        #result { background: #111827; padding: 25px; border-radius: 15px; border: 1px solid #334155; display: none; }
+        
+        /* Fitur Sticky untuk Keranjang */
+        #cart-section { 
+            background: #111827; 
+            padding: 25px; 
+            border-radius: 15px; 
+            border: 1px solid #334155; 
+            position: sticky; 
+            top: 20px; 
+        }
+
         .nutrisi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
         .nutrisi-box { background: #1e293b; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #334155; }
         .nutrisi-val { font-size: 24px; font-weight: bold; color: #22c55e; display: block; margin-top: 5px;}
-        pre { white-space: pre-wrap; font-family: inherit; color: #cbd5e1; line-height: 1.8; background: #1e293b; padding: 20px; border-radius: 10px; border: 1px solid #334155; max-height: 300px; overflow-y: auto;}
+        pre { white-space: pre-wrap; font-family: inherit; color: #cbd5e1; line-height: 1.8; background: #1e293b; padding: 20px; border-radius: 10px; border: 1px solid #334155; max-height: 400px; overflow-y: auto;}
         
         /* Tombol Tambah dengan Animasi */
-        .btn-add { background-color: #3b82f6; color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; margin-bottom: 20px; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; gap: 8px;}
+        .btn-add { background-color: #3b82f6; color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; margin-bottom: 20px; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; gap: 8px;}
         .btn-add:hover { background-color: #2563eb; }
         .btn-add.success { background-color: #16a34a; transform: scale(0.98); }
 
-        #cart-section { width: 100%; max-width: 450px; background: #111827; padding: 20px; border-radius: 15px; border: 1px solid #334155; }
         .cart-item { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 10px 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #334155;}
         .cart-item-title { font-weight: bold; color: #f8fafc; }
         .cart-item-cals { color: #22c55e; font-size: 14px; }
-        .btn-delete { background: #ef4444; color: white; border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer; font-size: 12px;}
+        .btn-delete { background: #ef4444; color: white; border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer; font-size: 12px; transition: 0.3s;}
+        .btn-delete:hover { background: #dc2626; }
         
         .total-box { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); padding: 15px; border-radius: 10px; margin-top: 20px; }
-        .total-title { color: #4ade80; font-weight: bold; margin-bottom: 10px; font-size: 18px; text-align: center;}
+        .total-title { color: #4ade80; font-weight: bold; margin-bottom: 15px; font-size: 18px; text-align: center;}
         .total-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center; }
         .t-val { font-weight: bold; color: #fff; font-size: 16px; display: block;}
         .t-lbl { color: #94a3b8; font-size: 12px; }
 
         /* Layout Panduan Gizi (Di Bawah) */
-        .guide-container { width: 100%; max-width: 1000px; background: #111827; border: 1px solid #334155; border-radius: 15px; padding: 20px; text-align: center;}
+        .guide-container { width: 100%; max-width: 1100px; background: #111827; border: 1px solid #334155; border-radius: 15px; padding: 25px; text-align: center;}
         
         /* Sistem Tab Mode */
         .mode-toggles { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
@@ -77,7 +102,7 @@
     <div class="badge">Didukung Sepenuhnya oleh Groq AI</div>
     
     <h1>🌿 NutriScan</h1>
-    <p class="subtitle">Cari kandungan gizi, pantang kalori harianmu, dan lihat rekomendasi menu sehat dari AI.</p>
+    <p class="subtitle">Cari kandungan gizi, pantau kalori harianmu, dan lihat rekomendasi menu sehat dari AI.</p>
     
     <div class="search-box">
         <input type="text" id="input-makanan" placeholder="🔍 Masukkan nama makanan (cth: Tempe Bacem)...">
@@ -87,11 +112,13 @@
     <div id="error-msg"></div>
     <div id="loading">Otak AI sedang meracik data gizi dan resep... ⏳</div>
     
-    <!-- KALKULATOR & HASIL DI ATAS -->
+    <!-- KALKULATOR & HASIL (GRID MENYAMPING) -->
     <div class="app-layout">
+        
+        <!-- BAGIAN KIRI: HASIL PENCARIAN -->
         <div id="result">
-            <h3 id="food-title" style="margin-top:0; color: #4ade80; font-size: 24px;"></h3>
-            <!-- Tombol Tambah Menu -->
+            <h3 id="food-title" style="margin-top:0; color: #4ade80; font-size: 26px;"></h3>
+            
             <button class="btn-add" id="btn-tambah" onclick="tambahKeDaftar()">➕ Tambah ke Menu Harian</button>
             
             <div class="nutrisi-grid">
@@ -104,8 +131,9 @@
             <pre id="val-resep"></pre>
         </div>
 
+        <!-- BAGIAN KANAN: KERANJANG HARIAN (STICKY) -->
         <div id="cart-section">
-            <h3 style="margin-top:0; color: #f8fafc; border-bottom: 1px solid #334155; padding-bottom: 10px;">🛒 Daftar Menu Harian</h3>
+            <h3 style="margin-top:0; color: #f8fafc; border-bottom: 1px solid #334155; padding-bottom: 15px;">🛒 Daftar Menu Harian</h3>
             <div id="cart-items">
                 <p style="color: #64748b; font-size: 14px; text-align: center; margin-top: 20px;">Daftar makanan masih kosong. Cari makanan dan klik tambah.</p>
             </div>
@@ -120,9 +148,10 @@
                 </div>
             </div>
         </div>
+
     </div>
 
-    <!-- PANDUAN REKOMENDASI DI BAWAH (SISTEM TAB) -->
+    <!-- PANDUAN REKOMENDASI (SISTEM TAB) -->
     <div class="guide-container">
         <h2 style="margin-top: 0; color: #f8fafc; font-size: 20px;">Rekomendasi Menu Spesifik</h2>
         
@@ -181,7 +210,6 @@
     </div>
 
     <script>
-        // Logika Tab Mode Diet/Bulking
         function switchTab(mode) {
             document.getElementById('tab-diet').classList.remove('active');
             document.getElementById('tab-bulk').classList.remove('active');
@@ -197,7 +225,6 @@
             }
         }
 
-        // Logika Keranjang & Animasi Tombol
         let daftarHarian = [];
 
         function parseAngka(str) {
@@ -215,7 +242,6 @@
             daftarHarian.push({ nama, kalori, protein, karbo, lemak });
             renderKeranjang();
 
-            // Animasi Tombol
             const btn = document.getElementById('btn-tambah');
             btn.innerHTML = '✅ Berhasil Ditambahkan!';
             btn.classList.add('success');
@@ -264,7 +290,6 @@
             document.getElementById('tot-lem').innerText = lem.toFixed(1);
         }
 
-        // Logika Pencarian AI
         document.getElementById('input-makanan').addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
@@ -275,7 +300,6 @@
         function setSearch(makanan) {
             document.getElementById('input-makanan').value = makanan;
             cariData(); 
-            // Otomatis scroll ke atas (ke bagian hasil)
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
