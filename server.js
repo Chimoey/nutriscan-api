@@ -1,7 +1,7 @@
-const express = require('express');
-const cors = require('cors');
-const axios = require('axios');
-const path = require('path');
+import express from 'express';
+import cors from 'cors';
+import axios from 'axios';
+import path from 'path';
 
 const app = express();
 
@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(express.static(process.cwd()));
 
 // ==========================================
-// 2. RUTE UTAMA TAMPILAN WEB (Biar Gak 404)
+// 2. RUTE UTAMA TAMPILAN WEB
 // ==========================================
 app.get('/', (req, res) => {
     res.sendFile(path.join(process.cwd(), 'kalori.html'));
@@ -23,12 +23,10 @@ app.get('/', (req, res) => {
 // 3. MESIN API NUTRISCAN (FATSECRET & GROQ)
 // ==========================================
 app.post('/api/nutrisi', async (req, res) => {
-    // Menangkap input nama makanan dari kalori.html
     const { makanan } = req.body; 
 
     try {
         // --- A. PROSES FATSECRET ---
-        // Bikin token otorisasi pakai CLIENT_ID & CLIENT_SECRET dari Vercel
         const credentials = Buffer.from(`${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64');
         const tokenResponse = await axios.post('https://oauth.fatsecret.com/connect/token', 
             'grant_type=client_credentials&scope=basic', {
@@ -39,7 +37,6 @@ app.post('/api/nutrisi', async (req, res) => {
         });
         const access_token = tokenResponse.data.access_token;
 
-        // Tarik data kalori dari FatSecret
         const fatsecretResponse = await axios.get('https://platform.fatsecret.com/rest/server.api', {
             headers: { 'Authorization': `Bearer ${access_token}` },
             params: {
@@ -51,7 +48,6 @@ app.post('/api/nutrisi', async (req, res) => {
         });
 
         // --- B. PROSES GROQ AI ---
-        // Minta resep masakan ke AI pakai GROQ_API_KEY dari Vercel
         const groqResponse = await axios.post('https://api.groq.com/openai/v1/chat/completions', {
             model: "llama3-8b-8192",
             messages: [
@@ -80,6 +76,6 @@ app.post('/api/nutrisi', async (req, res) => {
 });
 
 // ==========================================
-// 4. EXPORT KHUSUS VERCEL
+// 4. EXPORT KHUSUS VERCEL (ES MODULE)
 // ==========================================
-module.exports = app;
+export default app;
