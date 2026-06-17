@@ -35,7 +35,7 @@
         .nutrisi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
         .nutrisi-box { background: #1e293b; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #334155; }
         .nutrisi-val { font-size: 24px; font-weight: bold; color: #22c55e; display: block; margin-top: 5px;}
-        pre { white-space: pre-wrap; font-family: inherit; color: #cbd5e1; line-height: 1.6; background: #1e293b; padding: 15px; border-radius: 10px; border: 1px solid #334155; }
+        pre { white-space: pre-wrap; font-family: inherit; color: #cbd5e1; line-height: 1.8; background: #1e293b; padding: 20px; border-radius: 10px; border: 1px solid #334155; }
     </style>
 </head>
 <body>
@@ -72,7 +72,6 @@
     </div>
 
     <script>
-        // Sensor Tombol Enter
         document.getElementById('input-makanan').addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
@@ -115,7 +114,19 @@
                 document.getElementById('val-protein').innerText = data.protein;
                 document.getElementById('val-karbo').innerText = data.karbohidrat;
                 document.getElementById('val-lemak').innerText = data.lemak;
-                document.getElementById('val-resep').innerText = data.resep;
+
+                // --- MANIPULASI TEKS AGAR RAPI ---
+                let teksResep = data.resep;
+                
+                // 1. Kasih jarak dan ikon untuk bagian utama
+                teksResep = teksResep.replace(/(Bahan-bahan:|Bahan:)/gi, "🥗 $1\n");
+                teksResep = teksResep.replace(/(Cara membuat:|Langkah-langkah:|Cara Membuat:)/gi, "\n\n🍳 $1\n");
+                
+                // 2. Tiap akhir kalimat (titik lalu spasi), diturunkan ke baris baru biar nggak numpuk
+                teksResep = teksResep.replace(/\.\s/g, ".\n");
+                
+                // Tampilkan ke layar
+                document.getElementById('val-resep').innerText = teksResep.trim();
                 
                 loading.style.display = 'none';
                 resultDiv.style.display = 'block';
