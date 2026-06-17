@@ -97,6 +97,14 @@
     </div>
 
     <script>
+        // --- FITUR ENTER DITAMBAHKAN DI SINI ---
+        document.getElementById('input-makanan').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Mencegah reload halaman secara default
+                cariData();
+            }
+        });
+
         function setSearch(makanan) {
             document.getElementById('input-makanan').value = makanan;
             cariData();
@@ -126,10 +134,50 @@
                 const data = await response.json();
                 if (data.error) throw new Error(data.error);
 
-                // --- LOGIKA PENANGKAP ANGKA TINGKAT DEWA ---
                 let foodData = data.nutrisi?.foods?.food;
                 let foodInfo = null;
                 
                 if (Array.isArray(foodData)) {
                     foodInfo = foodData[0];
-                } else if (foodData
+                } else if (foodData) {
+                    foodInfo = foodData;
+                }
+
+                if (!foodInfo) {
+                    document.getElementById('food-title').innerText = "Data Gizi Tidak Ditemukan";
+                    document.getElementById('val-kalori').innerText = '?';
+                    document.getElementById('val-lemak').innerText = '?';
+                    document.getElementById('val-karbo').innerText = '?';
+                    document.getElementById('val-protein').innerText = '?';
+                    
+                    document.getElementById('val-resep').innerText = "⚠️ DEBUG FATSECRET: \n" + JSON.stringify(data.nutrisi, null, 2) + "\n\nResep AI:\n" + data.resep;
+                } else {
+                    const foodDesc = foodInfo.food_description || "";
+                    
+                    const kaloriMatch = foodDesc.match(/(?:Calories|Kalori)[^0-9]*([\d.,]+)/i);
+                    const lemakMatch = foodDesc.match(/(?:Fat|Lemak)[^0-9]*([\d.,]+)/i);
+                    const karboMatch = foodDesc.match(/(?:Carbs|Karbohidrat|Karbo)[^0-9]*([\d.,]+)/i);
+                    const proteinMatch = foodDesc.match(/(?:Protein)[^0-9]*([\d.,]+)/i);
+
+                    document.getElementById('food-title').innerText = foodInfo.food_name || input;
+                    document.getElementById('val-kalori').innerText = kaloriMatch ? kaloriMatch[1] + ' kcal' : '0 kcal';
+                    document.getElementById('val-lemak').innerText = lemakMatch ? lemakMatch[1] + ' g' : '0 g';
+                    document.getElementById('val-karbo').innerText = karboMatch ? karboMatch[1] + ' g' : '0 g';
+                    document.getElementById('val-protein').innerText = proteinMatch ? proteinMatch[1] + ' g' : '0 g';
+                    
+                    document.getElementById('val-resep').innerText = data.resep;
+                }
+                
+                loading.style.display = 'none';
+                resultDiv.style.display = 'block';
+
+            } catch (error) {
+                console.error("Error:", error);
+                loading.style.display = 'none';
+                errorMsg.innerText = "Gagal terhubung ke server!";
+                errorMsg.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
