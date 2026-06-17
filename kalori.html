@@ -21,51 +21,21 @@
         p.subtitle { color: #94a3b8; text-align: center; max-width: 650px; margin-bottom: 40px; line-height: 1.6; font-size: 16px;}
         
         .search-container {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            max-width: 700px;
-            background-color: #111827;
-            border: 2px solid #064e3b; 
-            border-radius: 50px; 
-            padding: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 0 20px rgba(34, 197, 94, 0.15); 
-            transition: all 0.3s ease;
-            position: relative;
+            display: flex; align-items: center; width: 100%; max-width: 700px;
+            background-color: #111827; border: 2px solid #064e3b; border-radius: 50px; 
+            padding: 8px; margin-bottom: 30px; box-shadow: 0 0 20px rgba(34, 197, 94, 0.15); 
+            transition: all 0.3s ease; position: relative;
         }
         
         .search-container:hover, .search-container:focus-within {
-            border-color: #22c55e;
-            box-shadow: 0 0 30px rgba(34, 197, 94, 0.4);
-            transform: translateY(-2px);
+            border-color: #22c55e; box-shadow: 0 0 30px rgba(34, 197, 94, 0.4); transform: translateY(-2px);
         }
 
         .search-icon { position: absolute; left: 25px; font-size: 20px; pointer-events: none; }
 
-        input { 
-            flex: 1; 
-            background: transparent; 
-            border: none; 
-            color: white; 
-            padding: 15px 20px 15px 55px; 
-            font-size: 16px; 
-            outline: none; 
-            width: 100%;
-        }
+        input { flex: 1; background: transparent; border: none; color: white; padding: 15px 20px 15px 55px; font-size: 16px; outline: none; width: 100%;}
         
-        .btn-cari { 
-            background-color: #22c55e; 
-            color: #000; 
-            border: none; 
-            padding: 15px 40px; 
-            border-radius: 40px; 
-            font-weight: bold; 
-            font-size: 16px; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
-        }
+        .btn-cari { background-color: #22c55e; color: #000; border: none; padding: 15px 40px; border-radius: 40px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);}
         .btn-cari:hover { background-color: #16a34a; box-shadow: 0 0 15px rgba(22, 163, 74, 0.8); }
         
         #error-msg { color: #ef4444; margin-top: 20px; font-size: 16px; display: none; text-align: center; background: rgba(239, 68, 68, 0.1); padding: 15px; border-radius: 10px; border: 1px solid rgba(239, 68, 68, 0.2); max-width: 600px; width: 100%; }
@@ -80,6 +50,19 @@
         .nutrisi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
         .nutrisi-box { background: #1e293b; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #334155; }
         .nutrisi-val { font-size: 24px; font-weight: bold; color: #22c55e; display: block; margin-top: 5px;}
+        
+        /* --- DESAIN KOTAK FUN FACT --- */
+        .funfact-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            color: #bfdbfe;
+            line-height: 1.6;
+        }
+        .funfact-title { color: #60a5fa; font-weight: bold; margin-bottom: 8px; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+
         pre { white-space: pre-wrap; font-family: inherit; color: #cbd5e1; line-height: 1.8; background: #1e293b; padding: 20px; border-radius: 10px; border: 1px solid #334155; max-height: 400px; overflow-y: auto;}
         
         .btn-add { background-color: #3b82f6; color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; margin-bottom: 20px; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; gap: 8px;}
@@ -114,17 +97,7 @@
 
         .guide-desc { font-size: 14px; color: #cbd5e1; margin-bottom: 20px; background: #1e293b; padding: 15px; border-radius: 10px; display: inline-block;}
         
-        /* Area Menu dibuat scrollable ke bawah kalau kebanyakan biar ngga merusak layout utama */
-        .chips { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
-            gap: 10px; 
-            max-height: 300px; 
-            overflow-y: auto; 
-            padding-right: 10px;
-        }
-        
-        /* Modifikasi Scrollbar Menu */
+        .chips { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; max-height: 300px; overflow-y: auto; padding-right: 10px; }
         .chips::-webkit-scrollbar { width: 6px; }
         .chips::-webkit-scrollbar-track { background: #1e293b; border-radius: 10px; }
         .chips::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
@@ -147,7 +120,7 @@
     </div>
 
     <div id="error-msg"></div>
-    <div id="loading">Otak AI sedang meracik data gizi dan resep... ⏳</div>
+    <div id="loading">Otak AI sedang meracik data gizi, fun fact, dan resep... ⏳</div>
     
     <div class="app-layout">
         <div id="result">
@@ -159,6 +132,13 @@
                 <div class="nutrisi-box">Karbo<span class="nutrisi-val"><span id="val-karbo">-</span></span></div>
                 <div class="nutrisi-box">Lemak<span class="nutrisi-val"><span id="val-lemak">-</span></span></div>
             </div>
+
+            <!-- KOTAK FUN FACT BARU -->
+            <div class="funfact-box">
+                <div class="funfact-title">💡 Info & Fun Fact</div>
+                <div id="val-funfact" style="font-size: 15px;">-</div>
+            </div>
+
             <h4 style="margin-bottom: 10px;">Instruksi Resep AI:</h4>
             <pre id="val-resep"></pre>
         </div>
@@ -181,6 +161,7 @@
         </div>
     </div>
 
+    <!-- PANDUAN REKOMENDASI (4 TAB) -->
     <div class="guide-container">
         <h2 style="margin-top: 0; color: #f8fafc; font-size: 20px;">Rekomendasi Menu & Minuman Spesifik</h2>
         
@@ -421,6 +402,9 @@
                 document.getElementById('val-protein').innerText = data.protein;
                 document.getElementById('val-karbo').innerText = data.karbohidrat;
                 document.getElementById('val-lemak').innerText = data.lemak;
+                
+                // Menampilkan Data Fun Fact
+                document.getElementById('val-funfact').innerText = data.funfact || "Deskripsi sejarah dan fakta unik belum tersedia untuk menu ini.";
 
                 let teksResep = data.resep;
                 teksResep = teksResep.replace(/(Bahan-bahan:|Bahan:)/gi, "🥗 $1\n");
