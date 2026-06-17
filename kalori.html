@@ -2,7 +2,8 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>NutriScan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriScan - AI</title>
     <style>
         body { 
             background-color: #0b110e; 
@@ -10,48 +11,121 @@
                 linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), 
                 linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
             background-size: 30px 30px;
-            color: #e2e8f0; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 50px 20px; margin: 0;
+            color: #e2e8f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; flex-direction: column; align-items: center; padding: 50px 20px; margin: 0;
         }
-        .search-box { display: flex; width: 100%; max-width: 600px; background: #111827; border: 1px solid #334155; border-radius: 30px; padding: 5px; margin-bottom: 20px; }
-        input { flex: 1; background: transparent; border: none; color: white; padding: 15px 20px; outline: none; }
-        button { background: #22c55e; color: #000; border: none; padding: 15px 30px; border-radius: 25px; cursor: pointer; }
-        #result { margin-top: 30px; width: 100%; max-width: 600px; background: #111827; padding: 20px; border-radius: 15px; display: none; }
-        .nutrisi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .nutrisi-box { background: #1e293b; padding: 15px; border-radius: 10px; text-align: center; }
-        .nutrisi-val { font-size: 24px; font-weight: bold; color: #22c55e; display: block; }
-        pre { white-space: pre-wrap; color: #cbd5e1; }
+        .badge { background-color: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); color: #4ade80; padding: 8px 16px; border-radius: 20px; font-size: 14px; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 8px; }
+        .badge::before { content: ''; width: 8px; height: 8px; background-color: #4ade80; border-radius: 50%; box-shadow: 0 0 8px #4ade80; }
+        h1 { font-size: 48px; margin: 0 0 10px 0; display: flex; align-items: center; gap: 10px; }
+        p.subtitle { color: #94a3b8; text-align: center; max-width: 600px; margin-bottom: 40px; line-height: 1.6; }
+        
+        .search-box { display: flex; width: 100%; max-width: 600px; background-color: #111827; border: 1px solid #334155; border-radius: 30px; padding: 5px; margin-bottom: 20px; }
+        input { flex: 1; background: transparent; border: none; color: white; padding: 15px 20px; font-size: 16px; outline: none; }
+        button { background-color: #22c55e; color: #000; border: none; padding: 15px 30px; border-radius: 25px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        button:hover { background-color: #16a34a; }
+        
+        .chips { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 40px; }
+        .chip { border: 1px solid #334155; background: transparent; color: #94a3b8; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; transition: 0.3s; }
+        .chip:hover { border-color: #22c55e; color: #22c55e; }
+        
+        #error-msg { color: #ef4444; margin-top: 20px; font-size: 16px; display: none; text-align: center; background: rgba(239, 68, 68, 0.1); padding: 15px; border-radius: 10px; border: 1px solid rgba(239, 68, 68, 0.2); max-width: 600px; width: 100%; }
+        #loading { color: #22c55e; margin-top: 20px; font-size: 16px; display: none; }
+        
+        #result { margin-top: 30px; width: 100%; max-width: 600px; background: #111827; padding: 20px; border-radius: 15px; border: 1px solid #334155; display: none; }
+        .nutrisi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
+        .nutrisi-box { background: #1e293b; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #334155; }
+        .nutrisi-val { font-size: 24px; font-weight: bold; color: #22c55e; display: block; margin-top: 5px;}
+        pre { white-space: pre-wrap; font-family: inherit; color: #cbd5e1; line-height: 1.6; background: #1e293b; padding: 15px; border-radius: 10px; border: 1px solid #334155; }
     </style>
 </head>
 <body>
+    <div class="badge">Didukung Sepenuhnya oleh Groq AI</div>
+    
     <h1>🌿 NutriScan</h1>
+    <p class="subtitle">Cari kandungan gizi makanan Nusantara secara instan, lalu dapatkan resep sehat yang diracik khusus oleh AI.</p>
+    
     <div class="search-box">
-        <input type="text" id="input-makanan" placeholder="Masukkan nama makanan...">
+        <input type="text" id="input-makanan" placeholder="🔍 Masukkan nama makanan...">
         <button onclick="cariData()">Cari Data</button>
     </div>
+
+    <div class="chips">
+        <div class="chip" onclick="setSearch('Nasi Goreng')">Nasi Goreng</div>
+        <div class="chip" onclick="setSearch('Rendang')">Rendang</div>
+        <div class="chip" onclick="setSearch('Soto Ayam')">Soto Ayam</div>
+        <div class="chip" onclick="setSearch('Gado-Gado')">Gado-Gado</div>
+    </div>
+
+    <div id="error-msg"></div>
+    <div id="loading">Otak AI sedang meracik data gizi dan resep... ⏳</div>
+    
     <div id="result">
-        <h3 id="food-title"></h3>
+        <h3 id="food-title" style="margin-top:0; color: #4ade80; font-size: 24px;"></h3>
         <div class="nutrisi-grid">
             <div class="nutrisi-box">Kalori<span class="nutrisi-val" id="val-kalori">-</span></div>
             <div class="nutrisi-box">Protein<span class="nutrisi-val" id="val-protein">-</span></div>
-            <div class="nutrisi-box">Karbo<span class="nutrisi-val" id="val-karbo">-</span></div>
+            <div class="nutrisi-box">Karbohidrat<span class="nutrisi-val" id="val-karbo">-</span></div>
             <div class="nutrisi-box">Lemak<span class="nutrisi-val" id="val-lemak">-</span></div>
         </div>
-        <h4>Resep:</h4><pre id="val-resep"></pre>
+        <h4 style="margin-bottom: 10px;">Instruksi Resep AI:</h4>
+        <pre id="val-resep"></pre>
     </div>
+
     <script>
-        document.getElementById('input-makanan').addEventListener('keypress', (e) => { if(e.key === 'Enter') cariData(); });
+        // Sensor Tombol Enter
+        document.getElementById('input-makanan').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                cariData();
+            }
+        });
+
+        function setSearch(makanan) {
+            document.getElementById('input-makanan').value = makanan;
+            cariData();
+        }
+
         async function cariData() {
             const input = document.getElementById('input-makanan').value;
-            const res = await fetch('/api/nutrisi', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ makanan: input }) });
-            const data = await res.json();
-            if (data.error) { alert(data.error); return; }
-            document.getElementById('food-title').innerText = input;
-            document.getElementById('val-kalori').innerText = data.kalori;
-            document.getElementById('val-protein').innerText = data.protein;
-            document.getElementById('val-karbo').innerText = data.karbohidrat;
-            document.getElementById('val-lemak').innerText = data.lemak;
-            document.getElementById('val-resep').innerText = data.resep;
-            document.getElementById('result').style.display = 'block';
+            if (!input) return;
+
+            const errorMsg = document.getElementById('error-msg');
+            const resultDiv = document.getElementById('result');
+            const loading = document.getElementById('loading');
+
+            errorMsg.style.display = 'none';
+            resultDiv.style.display = 'none';
+            loading.style.display = 'block';
+
+            try {
+                const response = await fetch('/api/nutrisi', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ makanan: input })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Terjadi kesalahan pada server API.');
+                }
+
+                document.getElementById('food-title').innerText = input.toUpperCase();
+                document.getElementById('val-kalori').innerText = data.kalori;
+                document.getElementById('val-protein').innerText = data.protein;
+                document.getElementById('val-karbo').innerText = data.karbohidrat;
+                document.getElementById('val-lemak').innerText = data.lemak;
+                document.getElementById('val-resep').innerText = data.resep;
+                
+                loading.style.display = 'none';
+                resultDiv.style.display = 'block';
+
+            } catch (error) {
+                console.error("Error Detail:", error);
+                loading.style.display = 'none';
+                errorMsg.innerText = "⚠️ " + error.message;
+                errorMsg.style.display = 'block';
+            }
         }
     </script>
 </body>
