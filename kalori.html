@@ -6,17 +6,20 @@
     <style>
         body { 
             background-color: #0b110e; 
-            background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), 
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
             background-size: 30px 30px;
             color: #e2e8f0; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 50px 20px; margin: 0;
         }
-        .search-box { display: flex; width: 100%; max-width: 600px; background: #111827; border: 1px solid #334155; border-radius: 30px; padding: 5px; }
+        .search-box { display: flex; width: 100%; max-width: 600px; background: #111827; border: 1px solid #334155; border-radius: 30px; padding: 5px; margin-bottom: 20px; }
         input { flex: 1; background: transparent; border: none; color: white; padding: 15px 20px; outline: none; }
         button { background: #22c55e; color: #000; border: none; padding: 15px 30px; border-radius: 25px; cursor: pointer; }
         #result { margin-top: 30px; width: 100%; max-width: 600px; background: #111827; padding: 20px; border-radius: 15px; display: none; }
         .nutrisi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .nutrisi-box { background: #1e293b; padding: 15px; border-radius: 10px; text-align: center; }
         .nutrisi-val { font-size: 24px; font-weight: bold; color: #22c55e; display: block; }
+        pre { white-space: pre-wrap; color: #cbd5e1; }
     </style>
 </head>
 <body>
@@ -41,6 +44,7 @@
             const input = document.getElementById('input-makanan').value;
             const res = await fetch('/api/nutrisi', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ makanan: input }) });
             const data = await res.json();
+            if (data.error) { alert(data.error); return; }
             document.getElementById('food-title').innerText = input;
             document.getElementById('val-kalori').innerText = data.kalori;
             document.getElementById('val-protein').innerText = data.protein;
