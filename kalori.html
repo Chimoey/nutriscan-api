@@ -14,53 +14,71 @@
             color: #e2e8f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             display: flex; flex-direction: column; align-items: center; padding: 50px 20px; margin: 0;
         }
-        .badge { background-color: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); color: #4ade80; padding: 8px 16px; border-radius: 20px; font-size: 14px; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 8px; }
-        .badge::before { content: ''; width: 8px; height: 8px; background-color: #4ade80; border-radius: 50%; box-shadow: 0 0 8px #4ade80; }
-        h1 { font-size: 48px; margin: 0 0 10px 0; display: flex; align-items: center; gap: 10px; text-align: center;}
-        p.subtitle { color: #94a3b8; text-align: center; max-width: 600px; margin-bottom: 30px; line-height: 1.6; }
         
-        /* --- EFEK GLOW VERCEL DI KOTAK PENCARIAN --- */
-        .search-box { 
-            display: flex; width: 100%; max-width: 600px; background-color: #111827; 
-            border: 1px solid #334155; border-radius: 30px; padding: 5px; margin-bottom: 20px; 
-            transition: all 0.3s ease; /* Animasi transisi mulus */
+        .badge { background-color: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); color: #4ade80; padding: 8px 16px; border-radius: 20px; font-size: 14px; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 8px; font-weight: bold;}
+        
+        h1 { font-size: 56px; margin: 0 0 10px 0; display: flex; align-items: center; gap: 10px; text-align: center;}
+        p.subtitle { color: #94a3b8; text-align: center; max-width: 650px; margin-bottom: 40px; line-height: 1.6; font-size: 16px;}
+        
+        /* --- DESAIN SEARCH BAR ALA VERCEL v0 --- */
+        .search-container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 700px;
+            background-color: #111827;
+            border: 2px solid #064e3b; /* Hijau gelap */
+            border-radius: 50px; /* Bentuk kapsul */
+            padding: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.15); /* Efek glow awal */
+            transition: all 0.3s ease;
+            position: relative;
         }
-        /* Menyala saat di-hover atau saat ngetik (fokus) */
-        .search-box:hover, .search-box:focus-within {
+        
+        /* Efek menyala terang saat kursor masuk atau lagi ngetik */
+        .search-container:hover, .search-container:focus-within {
             border-color: #22c55e;
-            box-shadow: 0 0 20px rgba(34, 197, 94, 0.2), 0 0 40px rgba(34, 197, 94, 0.05);
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.4);
             transform: translateY(-2px);
         }
 
-        input { flex: 1; background: transparent; border: none; color: white; padding: 15px 20px; font-size: 16px; outline: none; }
-        button { background-color: #22c55e; color: #000; border: none; padding: 15px 30px; border-radius: 25px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; }
-        button:hover { background-color: #16a34a; }
+        .search-icon { position: absolute; left: 25px; font-size: 20px; pointer-events: none; }
+
+        input { 
+            flex: 1; 
+            background: transparent; 
+            border: none; 
+            color: white; 
+            padding: 15px 20px 15px 55px; /* Spasi buat ikon kaca pembesar */
+            font-size: 16px; 
+            outline: none; 
+            width: 100%;
+        }
+        
+        .btn-cari { 
+            background-color: #22c55e; 
+            color: #000; 
+            border: none; 
+            padding: 15px 40px; 
+            border-radius: 40px; 
+            font-weight: bold; 
+            font-size: 16px; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+        }
+        .btn-cari:hover { background-color: #16a34a; box-shadow: 0 0 15px rgba(22, 163, 74, 0.8); }
         
         #error-msg { color: #ef4444; margin-top: 20px; font-size: 16px; display: none; text-align: center; background: rgba(239, 68, 68, 0.1); padding: 15px; border-radius: 10px; border: 1px solid rgba(239, 68, 68, 0.2); max-width: 600px; width: 100%; }
         #loading { color: #22c55e; margin-top: 20px; font-size: 16px; display: none; }
         
-        .app-layout { 
-            display: grid; 
-            grid-template-columns: 1.5fr 1fr;
-            gap: 20px; 
-            max-width: 1100px; 
-            width: 100%; 
-            align-items: start;
-            margin-bottom: 40px;
-        }
-
-        @media (max-width: 768px) {
-            .app-layout { grid-template-columns: 1fr; }
-        }
+        /* Layout Grid */
+        .app-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; max-width: 1100px; width: 100%; align-items: start; margin-bottom: 40px; }
+        @media (max-width: 768px) { .app-layout { grid-template-columns: 1fr; } }
         
         #result { background: #111827; padding: 25px; border-radius: 15px; border: 1px solid #334155; display: none; }
-        
-        #cart-section { 
-            background: #111827; 
-            padding: 25px; 
-            border-radius: 15px; 
-            border: 1px solid #334155; 
-        }
+        #cart-section { background: #111827; padding: 25px; border-radius: 15px; border: 1px solid #334155; }
 
         .nutrisi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
         .nutrisi-box { background: #1e293b; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #334155; }
@@ -83,12 +101,17 @@
         .t-val { font-weight: bold; color: #fff; font-size: 16px; display: block;}
         .t-lbl { color: #94a3b8; font-size: 12px; }
 
+        /* --- SISTEM 4 TAB MODE --- */
         .guide-container { width: 100%; max-width: 1100px; background: #111827; border: 1px solid #334155; border-radius: 15px; padding: 25px; text-align: center;}
         
-        .mode-toggles { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
-        .btn-mode { padding: 10px 20px; border-radius: 20px; border: 2px solid transparent; cursor: pointer; font-weight: bold; background: #1e293b; color: #94a3b8; transition: 0.3s; }
+        .mode-toggles { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;}
+        .btn-mode { padding: 10px 15px; border-radius: 20px; border: 2px solid transparent; cursor: pointer; font-weight: bold; background: #1e293b; color: #94a3b8; transition: 0.3s; font-size: 14px;}
+        
+        /* Warna Khusus Tiap Tab */
         .btn-mode.active-diet { background: rgba(59, 130, 246, 0.2); border-color: #3b82f6; color: #60a5fa; }
         .btn-mode.active-bulk { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #f87171; }
+        .btn-mode.active-kenyang { background: rgba(245, 158, 11, 0.2); border-color: #f59e0b; color: #fbbf24; }
+        .btn-mode.active-minum { background: rgba(168, 85, 247, 0.2); border-color: #a855f7; color: #c084fc; }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
@@ -102,14 +125,15 @@
     </style>
 </head>
 <body>
-    <div class="badge">Didukung Sepenuhnya oleh Groq AI</div>
+    <div class="badge">✨ Didukung oleh Groq AI</div>
     
     <h1>🌿 NutriScan</h1>
-    <p class="subtitle">Cari kandungan gizi, pantau kalori harianmu, dan lihat rekomendasi menu sehat dari AI.</p>
+    <p class="subtitle">Cari kandungan gizi, pantau kalori harianmu, dan dapatkan rekomendasi menu sehat dari AI berkuatan Groq.</p>
     
-    <div class="search-box">
-        <input type="text" id="input-makanan" placeholder="🔍 Masukkan nama makanan (cth: Tempe Bacem)...">
-        <button onclick="cariData()">Cari Data</button>
+    <div class="search-container">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="input-makanan" placeholder="Cari makanan (misal: Tempe Bacem, Ayam Goreng...)">
+        <button class="btn-cari" onclick="cariData()">Cari</button>
     </div>
 
     <div id="error-msg"></div>
@@ -118,9 +142,7 @@
     <div class="app-layout">
         <div id="result">
             <h3 id="food-title" style="margin-top:0; color: #4ade80; font-size: 26px;"></h3>
-            
             <button class="btn-add" id="btn-tambah" onclick="tambahKeDaftar()">➕ Tambah ke Menu Harian</button>
-            
             <div class="nutrisi-grid">
                 <div class="nutrisi-box">Kalori<span class="nutrisi-val"><span id="val-kalori">-</span></span></div>
                 <div class="nutrisi-box">Protein<span class="nutrisi-val"><span id="val-protein">-</span></span></div>
@@ -150,74 +172,84 @@
     </div>
 
     <div class="guide-container">
-        <h2 style="margin-top: 0; color: #f8fafc; font-size: 20px;">Rekomendasi Menu Spesifik</h2>
+        <h2 style="margin-top: 0; color: #f8fafc; font-size: 20px;">Rekomendasi Menu & Minuman Spesifik</h2>
         
         <div class="mode-toggles">
             <button class="btn-mode active-diet" id="btn-diet" onclick="switchTab('diet')">🥗 Mode Diet</button>
             <button class="btn-mode" id="btn-bulk" onclick="switchTab('bulk')">💪 Mode Bulking</button>
+            <button class="btn-mode" id="btn-kenyang" onclick="switchTab('kenyang')">🛡️ Kenyang Lebih Lama</button>
+            <button class="btn-mode" id="btn-minum" onclick="switchTab('minum')">🍹 Minuman Unik</button>
         </div>
 
         <div id="tab-diet" class="tab-content active">
-            <div class="guide-desc">
-                <strong>Target: 1500-1800 kcal.</strong> Fokus pada sayur, buah, dan protein tanpa lemak (dada ayam, ikan, tahu/tempe rebus) untuk membakar lemak namun mempertahankan otot.
-            </div>
+            <div class="guide-desc">Fokus pada sayur, buah, dan protein tanpa lemak (dada ayam, tahu rebus) untuk defisit kalori.</div>
             <div class="chips">
                 <div class="chip" onclick="setSearch('Dada Ayam Rebus')">Dada Ayam Rebus</div>
                 <div class="chip" onclick="setSearch('Salad Sayur')">Salad Sayur</div>
                 <div class="chip" onclick="setSearch('Pepes Tahu')">Pepes Tahu</div>
                 <div class="chip" onclick="setSearch('Sup Tomat')">Sup Tomat</div>
-                <div class="chip" onclick="setSearch('Telur Rebus')">Telur Rebus</div>
                 <div class="chip" onclick="setSearch('Sayur Bening Bayam')">Sayur Bening Bayam</div>
-                <div class="chip" onclick="setSearch('Ikan Bakar')">Ikan Bakar</div>
                 <div class="chip" onclick="setSearch('Tumis Brokoli')">Tumis Brokoli</div>
                 <div class="chip" onclick="setSearch('Pepes Jamur')">Pepes Jamur</div>
-                <div class="chip" onclick="setSearch('Tumis Kangkung')">Tumis Kangkung</div>
-                <div class="chip" onclick="setSearch('Sup Ayam Bening')">Sup Ayam Bening</div>
-                <div class="chip" onclick="setSearch('Tempe Kukus')">Tempe Kukus</div>
-                <div class="chip" onclick="setSearch('Gado-gado')">Gado-gado</div>
-                <div class="chip" onclick="setSearch('Pepes Ikan')">Pepes Ikan</div>
-                <div class="chip" onclick="setSearch('Tumis Buncis')">Tumis Buncis</div>
+                <div class="chip" onclick="setSearch('Ikan Bakar')">Ikan Bakar</div>
             </div>
         </div>
 
         <div id="tab-bulk" class="tab-content">
-            <div class="guide-desc">
-                <strong>Target: 2500-3000+ kcal.</strong> Fokus pada karbohidrat padat (nasi, kentang) untuk tenaga beban, dan protein tinggi (sapi, telur, whey) untuk serat otot.
-            </div>
+            <div class="guide-desc">Fokus pada karbohidrat padat (nasi) dan protein tinggi (sapi, telur, whey) untuk surplus kalori.</div>
             <div class="chips">
                 <div class="chip" onclick="setSearch('Nasi Rendang')">Nasi Rendang</div>
                 <div class="chip" onclick="setSearch('Sate Kambing')">Sate Kambing</div>
                 <div class="chip" onclick="setSearch('Sapi Lada Hitam')">Sapi Lada Hitam</div>
-                <div class="chip" onclick="setSearch('Susu Protein Whey')">Susu Whey</div>
                 <div class="chip" onclick="setSearch('Nasi Goreng Spesial')">Nasi Goreng Spesial</div>
                 <div class="chip" onclick="setSearch('Mie Goreng Telur')">Mie Goreng Telur</div>
-                <div class="chip" onclick="setSearch('Ayam Bakar Taliwang')">Ayam Bakar Taliwang</div>
                 <div class="chip" onclick="setSearch('Martabak Telur')">Martabak Telur</div>
                 <div class="chip" onclick="setSearch('Soto Betawi')">Soto Betawi</div>
-                <div class="chip" onclick="setSearch('Gule Kambing')">Gule Kambing</div>
-                <div class="chip" onclick="setSearch('Ayam Geprek')">Ayam Geprek</div>
-                <div class="chip" onclick="setSearch('Nasi Kuning')">Nasi Kuning</div>
-                <div class="chip" onclick="setSearch('Roti Selai Kacang')">Roti Selai Kacang</div>
-                <div class="chip" onclick="setSearch('Smoothie Pisang')">Smoothie Pisang</div>
-                <div class="chip" onclick="setSearch('Telur Dadar Padang')">Telur Dadar Padang</div>
+                <div class="chip" onclick="setSearch('Ayam Bakar Taliwang')">Ayam Bakar Taliwang</div>
+            </div>
+        </div>
+
+        <div id="tab-kenyang" class="tab-content">
+            <div class="guide-desc">Fokus pada makanan berserat sangat tinggi & karbohidrat kompleks agar gula darah stabil dan perut kenyang berjam-jam.</div>
+            <div class="chips">
+                <div class="chip" onclick="setSearch('Ubi Cilembu Panggang')">Ubi Cilembu</div>
+                <div class="chip" onclick="setSearch('Singkong Rebus')">Singkong Rebus</div>
+                <div class="chip" onclick="setSearch('Oatmeal Buah')">Oatmeal Buah</div>
+                <div class="chip" onclick="setSearch('Nasi Merah Dada Ayam')">Nasi Merah & Ayam</div>
+                <div class="chip" onclick="setSearch('Bubur Kacang Hijau')">Bubur Kacang Hijau</div>
+                <div class="chip" onclick="setSearch('Alpukat Keruk')">Alpukat Keruk</div>
+                <div class="chip" onclick="setSearch('Jagung Rebus')">Jagung Rebus</div>
+                <div class="chip" onclick="setSearch('Chia Seed Pudding')">Chia Pudding</div>
+            </div>
+        </div>
+
+        <div id="tab-minum" class="tab-content">
+            <div class="guide-desc">Rekomendasi minuman tradisional Nusantara yang menyehatkan, kaya rempah, dan unik khasiatnya.</div>
+            <div class="chips">
+                <div class="chip" onclick="setSearch('Wedang Uwuh')">Wedang Uwuh</div>
+                <div class="chip" onclick="setSearch('Jamu Kunyit Asam')">Kunyit Asam</div>
+                <div class="chip" onclick="setSearch('Bandrek Susu')">Bandrek Susu</div>
+                <div class="chip" onclick="setSearch('Bir Pletok')">Bir Pletok</div>
+                <div class="chip" onclick="setSearch('Es Daluman')">Es Daluman</div>
+                <div class="chip" onclick="setSearch('Wedang Ronde')">Wedang Ronde</div>
+                <div class="chip" onclick="setSearch('Jamu Beras Kencur')">Beras Kencur</div>
+                <div class="chip" onclick="setSearch('Bajigur')">Bajigur</div>
             </div>
         </div>
     </div>
 
     <script>
         function switchTab(mode) {
-            document.getElementById('tab-diet').classList.remove('active');
-            document.getElementById('tab-bulk').classList.remove('active');
-            document.getElementById('btn-diet').classList.remove('active-diet');
-            document.getElementById('btn-bulk').classList.remove('active-bulk');
+            // Sembunyikan semua tab & hapus status aktif
+            const tabs = ['diet', 'bulk', 'kenyang', 'minum'];
+            tabs.forEach(t => {
+                document.getElementById('tab-' + t).classList.remove('active');
+                document.getElementById('btn-' + t).classList.remove('active-' + t);
+            });
 
-            if (mode === 'diet') {
-                document.getElementById('tab-diet').classList.add('active');
-                document.getElementById('btn-diet').classList.add('active-diet');
-            } else {
-                document.getElementById('tab-bulk').classList.add('active');
-                document.getElementById('btn-bulk').classList.add('active-bulk');
-            }
+            // Aktifkan tab yang dipilih
+            document.getElementById('tab-' + mode).classList.add('active');
+            document.getElementById('btn-' + mode).classList.add('active-' + mode);
         }
 
         let daftarHarian = [];
