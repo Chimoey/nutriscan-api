@@ -1,428 +1,723 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NutriScan - AI & Tracker</title>
-    <style>
-        body { 
-            background-color: #0b110e; 
-            background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), 
-                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-            background-size: 30px 30px;
-            color: #e2e8f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            display: flex; flex-direction: column; align-items: center; padding: 50px 20px; margin: 0;
-        }
-        
-        .badge { background-color: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); color: #4ade80; padding: 8px 16px; border-radius: 20px; font-size: 14px; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 8px; font-weight: bold;}
-        
-        h1 { font-size: 56px; margin: 0 0 10px 0; display: flex; align-items: center; gap: 10px; text-align: center;}
-        p.subtitle { color: #94a3b8; text-align: center; max-width: 650px; margin-bottom: 40px; line-height: 1.6; font-size: 16px;}
-        
-        .search-container {
-            display: flex; align-items: center; width: 100%; max-width: 700px;
-            background-color: #111827; border: 2px solid #064e3b; border-radius: 50px; 
-            padding: 8px; margin-bottom: 30px; box-shadow: 0 0 20px rgba(34, 197, 94, 0.15); 
-            transition: all 0.3s ease; position: relative;
-        }
-        
-        .search-container:hover, .search-container:focus-within {
-            border-color: #22c55e; box-shadow: 0 0 30px rgba(34, 197, 94, 0.4); transform: translateY(-2px);
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriScan — Cari Gizi & Pantau Kalori</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .search-icon { position: absolute; left: 25px; font-size: 20px; pointer-events: none; }
+    :root {
+      --bg:        #f8f9fb;
+      --surface:   #ffffff;
+      --surface2:  #f1f4f8;
+      --border:    rgba(0,0,0,0.08);
+      --border-md: rgba(0,0,0,0.14);
+      --text:      #111318;
+      --text-2:    #555e6e;
+      --text-3:    #9aa2af;
+      --green:     #16a34a;
+      --green-bg:  #dcfce7;
+      --green-bdr: #bbf7d0;
+      --green-txt: #14532d;
+      --blue:      #2563eb;
+      --blue-bg:   #eff6ff;
+      --blue-bdr:  #bfdbfe;
+      --blue-txt:  #1e3a8a;
+      --amber:     #d97706;
+      --amber-bg:  #fffbeb;
+      --amber-bdr: #fde68a;
+      --amber-txt: #78350f;
+      --red:       #dc2626;
+      --red-bg:    #fef2f2;
+      --red-bdr:   #fecaca;
+      --red-txt:   #7f1d1d;
+      --purple:    #7c3aed;
+      --purple-bg: #f5f3ff;
+      --purple-bdr:#ddd6fe;
+      --purple-txt:#3b0764;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --shadow:    0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05);
+    }
 
-        input { flex: 1; background: transparent; border: none; color: white; padding: 15px 20px 15px 55px; font-size: 16px; outline: none; width: 100%;}
-        
-        .btn-cari { background-color: #22c55e; color: #000; border: none; padding: 15px 40px; border-radius: 40px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);}
-        .btn-cari:hover { background-color: #16a34a; box-shadow: 0 0 15px rgba(22, 163, 74, 0.8); }
-        
-        #error-msg { color: #ef4444; margin-top: 20px; font-size: 16px; display: none; text-align: center; background: rgba(239, 68, 68, 0.1); padding: 15px; border-radius: 10px; border: 1px solid rgba(239, 68, 68, 0.2); max-width: 600px; width: 100%; }
-        #loading { color: #22c55e; margin-top: 20px; font-size: 16px; display: none; }
-        
-        .app-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; max-width: 1100px; width: 100%; align-items: start; margin-bottom: 40px; }
-        @media (max-width: 768px) { .app-layout { grid-template-columns: 1fr; } }
-        
-        #result { background: #111827; padding: 25px; border-radius: 15px; border: 1px solid #334155; display: none; }
-        #cart-section { background: #111827; padding: 25px; border-radius: 15px; border: 1px solid #334155; }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:        #0d1117;
+        --surface:   #161b22;
+        --surface2:  #21262d;
+        --border:    rgba(255,255,255,0.08);
+        --border-md: rgba(255,255,255,0.14);
+        --text:      #e6edf3;
+        --text-2:    #8b949e;
+        --text-3:    #484f58;
+        --green:     #3fb950;
+        --green-bg:  #0d2117;
+        --green-bdr: #1a4731;
+        --green-txt: #7ee787;
+        --blue:      #58a6ff;
+        --blue-bg:   #0c1f3a;
+        --blue-bdr:  #1d3a6e;
+        --blue-txt:  #a5c8ff;
+        --amber:     #f0b429;
+        --amber-bg:  #1f1800;
+        --amber-bdr: #3d2e00;
+        --amber-txt: #f0b429;
+        --red:       #f85149;
+        --red-bg:    #2d0a0a;
+        --red-bdr:   #5a1a1a;
+        --red-txt:   #f85149;
+        --purple:    #a78bfa;
+        --purple-bg: #1a0f3a;
+        --purple-bdr:#3b2070;
+        --purple-txt:#c4b5fd;
+        --shadow:    0 1px 3px rgba(0,0,0,0.4);
+      }
+    }
 
-        .nutrisi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
-        .nutrisi-box { background: #1e293b; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #334155; }
-        .nutrisi-val { font-size: 24px; font-weight: bold; color: #22c55e; display: block; margin-top: 5px;}
-        
-        /* --- DESAIN KOTAK FUN FACT --- */
-        .funfact-box {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            color: #bfdbfe;
-            line-height: 1.6;
-        }
-        .funfact-title { color: #60a5fa; font-weight: bold; margin-bottom: 8px; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
 
-        pre { white-space: pre-wrap; font-family: inherit; color: #cbd5e1; line-height: 1.8; background: #1e293b; padding: 20px; border-radius: 10px; border: 1px solid #334155; max-height: 400px; overflow-y: auto;}
-        
-        .btn-add { background-color: #3b82f6; color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; margin-bottom: 20px; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; gap: 8px;}
-        .btn-add:hover { background-color: #2563eb; }
-        .btn-add.success { background-color: #16a34a; transform: scale(0.98); }
+    /* ─── LAYOUT ─────────────────────────────── */
+    .page { max-width: 1040px; margin: 0 auto; padding: 48px 20px 80px; }
 
-        .cart-item { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 10px 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #334155;}
-        .cart-item-title { font-weight: bold; color: #f8fafc; }
-        .cart-item-cals { color: #22c55e; font-size: 14px; }
-        .btn-delete { background: #ef4444; color: white; border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer; font-size: 12px; transition: 0.3s;}
-        .btn-delete:hover { background: #dc2626; }
-        
-        .total-box { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); padding: 15px; border-radius: 10px; margin-top: 20px; }
-        .total-title { color: #4ade80; font-weight: bold; margin-bottom: 15px; font-size: 18px; text-align: center;}
-        .total-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center; }
-        .t-val { font-weight: bold; color: #fff; font-size: 16px; display: block;}
-        .t-lbl { color: #94a3b8; font-size: 12px; }
+    /* ─── HEADER ─────────────────────────────── */
+    .hdr { text-align: center; margin-bottom: 40px; }
 
-        .guide-container { width: 100%; max-width: 1100px; background: #111827; border: 1px solid #334155; border-radius: 15px; padding: 25px; text-align: center;}
-        
-        .mode-toggles { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;}
-        .btn-mode { padding: 10px 15px; border-radius: 20px; border: 2px solid transparent; cursor: pointer; font-weight: bold; background: #1e293b; color: #94a3b8; transition: 0.3s; font-size: 14px;}
-        
-        .btn-mode.active-diet { background: rgba(59, 130, 246, 0.2); border-color: #3b82f6; color: #60a5fa; }
-        .btn-mode.active-bulk { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #f87171; }
-        .btn-mode.active-kenyang { background: rgba(245, 158, 11, 0.2); border-color: #f59e0b; color: #fbbf24; }
-        .btn-mode.active-minum { background: rgba(168, 85, 247, 0.2); border-color: #a855f7; color: #c084fc; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--green-bg); color: var(--green-txt);
+      border: 1px solid var(--green-bdr);
+      font-size: 12px; font-weight: 600;
+      padding: 4px 12px; border-radius: 20px;
+      margin-bottom: 20px; letter-spacing: .3px;
+    }
 
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    .logo {
+      display: flex; align-items: center; justify-content: center;
+      gap: 12px; margin-bottom: 12px;
+    }
+    .logo-icon {
+      width: 44px; height: 44px; border-radius: var(--radius-md);
+      background: var(--green-bg); border: 1px solid var(--green-bdr);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+    }
+    .logo-text {
+      font-size: 34px; font-weight: 700;
+      color: var(--text); letter-spacing: -1px;
+    }
+    .logo-text span { color: var(--green); }
 
-        .guide-desc { font-size: 14px; color: #cbd5e1; margin-bottom: 20px; background: #1e293b; padding: 15px; border-radius: 10px; display: inline-block;}
-        
-        .chips { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; max-height: 300px; overflow-y: auto; padding-right: 10px; }
-        .chips::-webkit-scrollbar { width: 6px; }
-        .chips::-webkit-scrollbar-track { background: #1e293b; border-radius: 10px; }
-        .chips::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        .chips::-webkit-scrollbar-thumb:hover { background: #4ade80; }
+    .hdr-sub {
+      color: var(--text-2); font-size: 15px;
+      max-width: 480px; margin: 0 auto;
+    }
 
-        .chip { border: 1px solid #334155; background: #1e293b; color: #cbd5e1; padding: 10px; border-radius: 10px; cursor: pointer; font-size: 13px; transition: 0.3s; }
-        .chip:hover { border-color: #22c55e; color: #22c55e; transform: translateY(-2px); }
-    </style>
+    /* ─── SEARCH ─────────────────────────────── */
+    .search-wrap {
+      max-width: 640px; margin: 0 auto 40px;
+      display: flex; align-items: center; gap: 8px;
+      background: var(--surface); border: 1px solid var(--border-md);
+      border-radius: var(--radius-xl); padding: 6px 6px 6px 18px;
+      box-shadow: var(--shadow); transition: border-color .2s;
+    }
+    .search-wrap:focus-within { border-color: var(--green); }
+    .search-wrap .s-icon { font-size: 18px; color: var(--text-3); flex-shrink: 0; }
+    .search-input {
+      flex: 1; border: none; outline: none; background: transparent;
+      font-size: 15px; color: var(--text); font-family: inherit;
+    }
+    .search-input::placeholder { color: var(--text-3); }
+    .btn-search {
+      background: var(--green); color: #fff;
+      border: none; padding: 10px 22px;
+      border-radius: 18px; font-size: 14px;
+      font-weight: 600; cursor: pointer;
+      font-family: inherit; transition: opacity .2s;
+      display: flex; align-items: center; gap: 6px; white-space: nowrap;
+    }
+    .btn-search:hover { opacity: .88; }
+
+    /* ─── LOADING / ERROR ─────────────────────── */
+    #loading {
+      display: none; text-align: center;
+      color: var(--text-2); font-size: 14px;
+      padding: 16px; margin-bottom: 20px;
+    }
+    .spinner {
+      display: inline-block; width: 18px; height: 18px;
+      border: 2px solid var(--border-md);
+      border-top-color: var(--green);
+      border-radius: 50%; animation: spin .7s linear infinite;
+      vertical-align: -3px; margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #error-msg {
+      display: none; max-width: 640px; margin: 0 auto 20px;
+      background: var(--red-bg); border: 1px solid var(--red-bdr);
+      color: var(--red-txt); border-radius: var(--radius-md);
+      padding: 12px 16px; font-size: 14px; text-align: center;
+    }
+
+    /* ─── MAIN GRID ──────────────────────────── */
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0,1.6fr) minmax(0,1fr);
+      gap: 16px; margin-bottom: 16px;
+    }
+    @media (max-width: 700px) { .main-grid { grid-template-columns: 1fr; } }
+
+    /* ─── CARD BASE ──────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px; box-shadow: var(--shadow);
+    }
+
+    /* ─── RESULT CARD ────────────────────────── */
+    #result-card { display: none; }
+
+    .result-hdr {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 12px;
+      padding-bottom: 16px; margin-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .food-name { font-size: 19px; font-weight: 700; color: var(--text); }
+    .food-sub  { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+    .btn-add {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--green-bg); color: var(--green-txt);
+      border: 1px solid var(--green-bdr);
+      padding: 8px 14px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      font-family: inherit; transition: opacity .2s; white-space: nowrap; flex-shrink: 0;
+    }
+    .btn-add:hover { opacity: .8; }
+    .btn-add.added { background: var(--green); color: #fff; border-color: var(--green); }
+
+    /* ─── MACRO GRID ─────────────────────────── */
+    .macro-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 16px; }
+    .macro-box {
+      background: var(--surface2); border-radius: var(--radius-sm);
+      padding: 12px 8px; text-align: center;
+    }
+    .macro-lbl { font-size: 11px; color: var(--text-3); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .4px; }
+    .macro-val { font-size: 20px; font-weight: 700; color: var(--text); line-height: 1.1; }
+    .macro-unit { font-size: 11px; color: var(--text-3); }
+    .macro-box.kal .macro-val { color: var(--green); }
+
+    /* ─── FUN FACT ───────────────────────────── */
+    .fact-box {
+      background: var(--blue-bg); border: 1px solid var(--blue-bdr);
+      border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 16px;
+    }
+    .fact-label {
+      font-size: 12px; font-weight: 700; color: var(--blue-txt);
+      margin-bottom: 6px; display: flex; align-items: center; gap: 5px;
+      text-transform: uppercase; letter-spacing: .4px;
+    }
+    .fact-text { font-size: 13px; color: var(--blue-txt); line-height: 1.65; opacity: .85; }
+
+    /* ─── RECIPE ─────────────────────────────── */
+    .recipe-label {
+      font-size: 11px; font-weight: 700; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px;
+    }
+    .recipe-box {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 14px;
+      font-size: 13px; color: var(--text-2);
+      line-height: 1.8; max-height: 220px; overflow-y: auto;
+      font-family: inherit; white-space: pre-wrap;
+    }
+    .recipe-box::-webkit-scrollbar { width: 4px; }
+    .recipe-box::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 4px; }
+
+    /* ─── CART CARD ──────────────────────────── */
+    .cart-hdr {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 15px; font-weight: 700; color: var(--text);
+      padding-bottom: 14px; margin-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .cart-count {
+      margin-left: auto; font-size: 12px;
+      background: var(--surface2); color: var(--text-2);
+      padding: 2px 8px; border-radius: 10px; font-weight: 500;
+    }
+
+    .cart-empty {
+      text-align: center; padding: 28px 0;
+      color: var(--text-3); font-size: 13px;
+    }
+    .cart-empty-icon { font-size: 30px; margin-bottom: 8px; }
+
+    .cart-item {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--surface2); border-radius: var(--radius-sm);
+      padding: 10px 12px; margin-bottom: 6px; gap: 8px;
+    }
+    .ci-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .ci-cal  { font-size: 12px; color: var(--green); margin-top: 1px; }
+    .btn-del {
+      background: none; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--text-3); font-size: 14px;
+      transition: all .15s; flex-shrink: 0;
+    }
+    .btn-del:hover { background: var(--red-bg); border-color: var(--red-bdr); color: var(--red); }
+
+    /* ─── TOTALS ─────────────────────────────── */
+    .total-box {
+      margin-top: 14px; background: var(--green-bg);
+      border: 1px solid var(--green-bdr); border-radius: var(--radius-sm); padding: 14px;
+    }
+    .total-label {
+      font-size: 11px; font-weight: 700; color: var(--green-txt);
+      text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px;
+    }
+    .total-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; text-align: center; }
+    .t-val { font-size: 16px; font-weight: 700; color: var(--green-txt); display: block; }
+    .t-lbl { font-size: 11px; color: var(--green-txt); opacity: .65; }
+
+    /* ─── GUIDE CARD ─────────────────────────── */
+    .guide-card { margin-bottom: 0; }
+    .guide-hdr {
+      font-size: 15px; font-weight: 700; color: var(--text);
+      margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+    }
+
+    .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .tab {
+      display: flex; align-items: center; gap: 5px;
+      padding: 7px 14px; border-radius: 20px;
+      border: 1px solid var(--border-md);
+      background: transparent; color: var(--text-2);
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      font-family: inherit; transition: all .15s;
+    }
+    .tab:hover { border-color: var(--border-md); color: var(--text); background: var(--surface2); }
+    .tab.act-diet    { background: var(--blue-bg);   color: var(--blue-txt);   border-color: var(--blue-bdr); }
+    .tab.act-bulk    { background: var(--red-bg);    color: var(--red-txt);    border-color: var(--red-bdr); }
+    .tab.act-kenyang { background: var(--amber-bg);  color: var(--amber-txt);  border-color: var(--amber-bdr); }
+    .tab.act-minum   { background: var(--purple-bg); color: var(--purple-txt); border-color: var(--purple-bdr); }
+
+    .tab-desc {
+      font-size: 13px; color: var(--text-2); line-height: 1.5;
+      margin-bottom: 14px; display: none;
+    }
+    .tab-desc.active { display: block; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      padding: 6px 13px; border-radius: 20px;
+      border: 1px solid var(--border); background: var(--surface2);
+      color: var(--text-2); font-size: 13px; cursor: pointer;
+      font-family: inherit; transition: all .15s;
+    }
+    .chip:hover {
+      border-color: var(--green-bdr);
+      background: var(--green-bg);
+      color: var(--green-txt);
+    }
+
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* ─── SCROLLBAR ───────────────────────────── */
+    .recipe-box::-webkit-scrollbar-track { background: transparent; }
+  </style>
 </head>
 <body>
-    <div class="badge">✨ Didukung oleh Groq AI</div>
-    
-    <h1>🌿 NutriScan</h1>
-    <p class="subtitle">Cari kandungan gizi, pantau kalori harianmu, dan dapatkan rekomendasi menu sehat dari AI berkuatan Groq.</p>
-    
-    <div class="search-container">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="input-makanan" placeholder="Cari makanan (misal: Tempe Bacem, Ayam Goreng...)">
-        <button class="btn-cari" onclick="cariData()">Cari</button>
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="hdr">
+    <div class="badge">✨ Didukung Groq AI</div>
+    <div class="logo">
+      <div class="logo-icon">🌿</div>
+      <h1 class="logo-text">Nutri<span>Scan</span></h1>
+    </div>
+    <p class="hdr-sub">Cari kandungan gizi, pantau kalori harian, dan dapatkan rekomendasi menu sehat dari AI.</p>
+  </header>
+
+  <!-- SEARCH -->
+  <div class="search-wrap">
+    <span class="s-icon">🔍</span>
+    <input class="search-input" id="input-makanan"
+      placeholder="Cari makanan, misal: Tempe Bacem, Ayam Goreng..." />
+    <button class="btn-search" onclick="cariData()">Cari</button>
+  </div>
+
+  <div id="loading"><span class="spinner"></span>Otak AI sedang meracik data gizi &amp; resep...</div>
+  <div id="error-msg"></div>
+
+  <!-- MAIN GRID -->
+  <div class="main-grid">
+
+    <!-- RESULT CARD -->
+    <div class="card" id="result-card">
+      <div class="result-hdr">
+        <div>
+          <div class="food-name" id="food-title">—</div>
+          <div class="food-sub">per 100g / 1 porsi estimasi</div>
+        </div>
+        <button class="btn-add" id="btn-tambah" onclick="tambahKeDaftar()">
+          ➕ Tambah ke harian
+        </button>
+      </div>
+
+      <div class="macro-grid">
+        <div class="macro-box kal">
+          <div class="macro-lbl">Kalori</div>
+          <div class="macro-val" id="val-kalori">—</div>
+          <div class="macro-unit">kcal</div>
+        </div>
+        <div class="macro-box">
+          <div class="macro-lbl">Protein</div>
+          <div class="macro-val" id="val-protein">—</div>
+          <div class="macro-unit">g</div>
+        </div>
+        <div class="macro-box">
+          <div class="macro-lbl">Karbo</div>
+          <div class="macro-val" id="val-karbo">—</div>
+          <div class="macro-unit">g</div>
+        </div>
+        <div class="macro-box">
+          <div class="macro-lbl">Lemak</div>
+          <div class="macro-val" id="val-lemak">—</div>
+          <div class="macro-unit">g</div>
+        </div>
+      </div>
+
+      <div class="fact-box">
+        <div class="fact-label">💡 Info &amp; Fun Fact</div>
+        <div class="fact-text" id="val-funfact">—</div>
+      </div>
+
+      <div class="recipe-label">Resep dari AI</div>
+      <div class="recipe-box" id="val-resep">—</div>
     </div>
 
-    <div id="error-msg"></div>
-    <div id="loading">Otak AI sedang meracik data gizi, fun fact, dan resep... ⏳</div>
-    
-    <div class="app-layout">
-        <div id="result">
-            <h3 id="food-title" style="margin-top:0; color: #4ade80; font-size: 26px;"></h3>
-            <button class="btn-add" id="btn-tambah" onclick="tambahKeDaftar()">➕ Tambah ke Menu Harian</button>
-            <div class="nutrisi-grid">
-                <div class="nutrisi-box">Kalori<span class="nutrisi-val"><span id="val-kalori">-</span></span></div>
-                <div class="nutrisi-box">Protein<span class="nutrisi-val"><span id="val-protein">-</span></span></div>
-                <div class="nutrisi-box">Karbo<span class="nutrisi-val"><span id="val-karbo">-</span></span></div>
-                <div class="nutrisi-box">Lemak<span class="nutrisi-val"><span id="val-lemak">-</span></span></div>
-            </div>
+    <!-- CART CARD -->
+    <div class="card">
+      <div class="cart-hdr">
+        🛒 Menu Harian
+        <span class="cart-count" id="cart-count">0 item</span>
+      </div>
 
-            <!-- KOTAK FUN FACT BARU -->
-            <div class="funfact-box">
-                <div class="funfact-title">💡 Info & Fun Fact</div>
-                <div id="val-funfact" style="font-size: 15px;">-</div>
-            </div>
-
-            <h4 style="margin-bottom: 10px;">Instruksi Resep AI:</h4>
-            <pre id="val-resep"></pre>
+      <div id="cart-items">
+        <div class="cart-empty">
+          <div class="cart-empty-icon">🍽️</div>
+          Daftar masih kosong.<br>Cari makanan lalu tambahkan.
         </div>
+      </div>
 
-        <div id="cart-section">
-            <h3 style="margin-top:0; color: #f8fafc; border-bottom: 1px solid #334155; padding-bottom: 15px;">🛒 Daftar Menu Harian</h3>
-            <div id="cart-items">
-                <p style="color: #64748b; font-size: 14px; text-align: center; margin-top: 20px;">Daftar makanan masih kosong. Cari makanan dan klik tambah.</p>
-            </div>
-            
-            <div class="total-box">
-                <div class="total-title">Total Gizi Seharian</div>
-                <div class="total-grid">
-                    <div><span class="t-val" id="tot-kal">0</span><span class="t-lbl">kcal</span></div>
-                    <div><span class="t-val" id="tot-pro">0</span><span class="t-lbl">g Pro</span></div>
-                    <div><span class="t-val" id="tot-kar">0</span><span class="t-lbl">g Karbo</span></div>
-                    <div><span class="t-val" id="tot-lem">0</span><span class="t-lbl">g Lemak</span></div>
-                </div>
-            </div>
+      <div class="total-box">
+        <div class="total-label">Total gizi seharian</div>
+        <div class="total-grid">
+          <div><span class="t-val" id="tot-kal">0</span><span class="t-lbl">kcal</span></div>
+          <div><span class="t-val" id="tot-pro">0</span><span class="t-lbl">g protein</span></div>
+          <div><span class="t-val" id="tot-kar">0</span><span class="t-lbl">g karbo</span></div>
+          <div><span class="t-val" id="tot-lem">0</span><span class="t-lbl">g lemak</span></div>
         </div>
+      </div>
     </div>
 
-    <!-- PANDUAN REKOMENDASI (4 TAB) -->
-    <div class="guide-container">
-        <h2 style="margin-top: 0; color: #f8fafc; font-size: 20px;">Rekomendasi Menu & Minuman Spesifik</h2>
-        
-        <div class="mode-toggles">
-            <button class="btn-mode active-diet" id="btn-diet" onclick="switchTab('diet')">🥗 Mode Diet</button>
-            <button class="btn-mode" id="btn-bulk" onclick="switchTab('bulk')">💪 Mode Bulking</button>
-            <button class="btn-mode" id="btn-kenyang" onclick="switchTab('kenyang')">🛡️ Kenyang Lebih Lama</button>
-            <button class="btn-mode" id="btn-minum" onclick="switchTab('minum')">🍹 Minuman Unik</button>
-        </div>
+  </div><!-- /main-grid -->
 
-        <!-- TAB DIET (21 Item) -->
-        <div id="tab-diet" class="tab-content active">
-            <div class="guide-desc">Fokus pada sayur, buah, dan protein tanpa lemak untuk defisit kalori harian yang sehat.</div>
-            <div class="chips">
-                <div class="chip" onclick="setSearch('Dada Ayam Rebus')">Dada Ayam Rebus</div>
-                <div class="chip" onclick="setSearch('Salad Sayur')">Salad Sayur</div>
-                <div class="chip" onclick="setSearch('Pepes Tahu')">Pepes Tahu</div>
-                <div class="chip" onclick="setSearch('Sup Tomat')">Sup Tomat</div>
-                <div class="chip" onclick="setSearch('Sayur Bening Bayam')">Sayur Bening Bayam</div>
-                <div class="chip" onclick="setSearch('Tumis Brokoli')">Tumis Brokoli</div>
-                <div class="chip" onclick="setSearch('Pepes Jamur')">Pepes Jamur</div>
-                <div class="chip" onclick="setSearch('Ikan Bakar')">Ikan Gurame Bakar</div>
-                <div class="chip" onclick="setSearch('Putih Telur Rebus')">Putih Telur Rebus</div>
-                <div class="chip" onclick="setSearch('Tumis Kangkung')">Tumis Kangkung</div>
-                <div class="chip" onclick="setSearch('Sup Ayam Bening')">Sup Ayam Bening</div>
-                <div class="chip" onclick="setSearch('Tahu Kukus')">Tahu Kukus</div>
-                <div class="chip" onclick="setSearch('Gado-Gado')">Gado-Gado</div>
-                <div class="chip" onclick="setSearch('Tumis Buncis')">Tumis Buncis</div>
-                <div class="chip" onclick="setSearch('Sapo Tahu')">Sapo Tahu</div>
-                <div class="chip" onclick="setSearch('Karedok')">Karedok</div>
-                <div class="chip" onclick="setSearch('Pecel Sayur')">Pecel Sayur</div>
-                <div class="chip" onclick="setSearch('Sayur Asem')">Sayur Asem</div>
-                <div class="chip" onclick="setSearch('Capcay Kuah')">Capcay Kuah</div>
-                <div class="chip" onclick="setSearch('Tumis Sawi Putih')">Tumis Sawi Putih</div>
-                <div class="chip" onclick="setSearch('Ayam Panggang Tanpa Kulit')">Ayam Panggang</div>
-            </div>
-        </div>
+  <!-- GUIDE CARD -->
+  <div class="card guide-card">
+    <div class="guide-hdr">📋 Rekomendasi menu &amp; minuman</div>
 
-        <!-- TAB BULKING (21 Item) -->
-        <div id="tab-bulk" class="tab-content">
-            <div class="guide-desc">Fokus pada karbohidrat padat dan protein tinggi untuk memaksimalkan surplus kalori dan massa otot.</div>
-            <div class="chips">
-                <div class="chip" onclick="setSearch('Nasi Rendang')">Nasi Rendang</div>
-                <div class="chip" onclick="setSearch('Sate Kambing')">Sate Kambing</div>
-                <div class="chip" onclick="setSearch('Sapi Lada Hitam')">Sapi Lada Hitam</div>
-                <div class="chip" onclick="setSearch('Nasi Goreng Spesial')">Nasi Goreng Spesial</div>
-                <div class="chip" onclick="setSearch('Mie Goreng Telur')">Mie Goreng Telur</div>
-                <div class="chip" onclick="setSearch('Martabak Telur')">Martabak Telur</div>
-                <div class="chip" onclick="setSearch('Soto Betawi')">Soto Betawi</div>
-                <div class="chip" onclick="setSearch('Ayam Bakar Taliwang')">Ayam Bakar Taliwang</div>
-                <div class="chip" onclick="setSearch('Gule Kambing')">Gule Kambing</div>
-                <div class="chip" onclick="setSearch('Nasi Padang Tunjang')">Nasi Tunjang</div>
-                <div class="chip" onclick="setSearch('Ayam Geprek')">Ayam Geprek</div>
-                <div class="chip" onclick="setSearch('Nasi Kuning')">Nasi Kuning</div>
-                <div class="chip" onclick="setSearch('Roti Bakar Selai Kacang')">Roti Selai Kacang</div>
-                <div class="chip" onclick="setSearch('Smoothie Pisang Cokelat')">Smoothie Pisang</div>
-                <div class="chip" onclick="setSearch('Telur Dadar Padang')">Telur Dadar Padang</div>
-                <div class="chip" onclick="setSearch('Sate Padang')">Sate Padang</div>
-                <div class="chip" onclick="setSearch('Bebek Goreng')">Bebek Goreng</div>
-                <div class="chip" onclick="setSearch('Tongseng Sapi')">Tongseng Sapi</div>
-                <div class="chip" onclick="setSearch('Iga Bakar')">Iga Bakar</div>
-                <div class="chip" onclick="setSearch('Sop Buntut')">Sop Buntut</div>
-                <div class="chip" onclick="setSearch('Nasi Campur Bali')">Nasi Campur Bali</div>
-            </div>
-        </div>
-
-        <!-- TAB KENYANG LAMA (21 Item) -->
-        <div id="tab-kenyang" class="tab-content">
-            <div class="guide-desc">Tinggi serat dan karbohidrat kompleks agar gula darah stabil dan perut menahan lapar berjam-jam.</div>
-            <div class="chips">
-                <div class="chip" onclick="setSearch('Ubi Cilembu Panggang')">Ubi Cilembu</div>
-                <div class="chip" onclick="setSearch('Singkong Rebus')">Singkong Rebus</div>
-                <div class="chip" onclick="setSearch('Oatmeal Buah')">Oatmeal Buah</div>
-                <div class="chip" onclick="setSearch('Nasi Merah Dada Ayam')">Nasi Merah Ayam</div>
-                <div class="chip" onclick="setSearch('Bubur Kacang Hijau')">Bubur Kacang Hijau</div>
-                <div class="chip" onclick="setSearch('Alpukat Keruk')">Alpukat Keruk</div>
-                <div class="chip" onclick="setSearch('Jagung Rebus')">Jagung Rebus</div>
-                <div class="chip" onclick="setSearch('Chia Seed Pudding')">Chia Pudding</div>
-                <div class="chip" onclick="setSearch('Kentang Rebus')">Kentang Rebus</div>
-                <div class="chip" onclick="setSearch('Edamame Rebus')">Edamame Rebus</div>
-                <div class="chip" onclick="setSearch('Pisang Ambon')">Pisang Ambon</div>
-                <div class="chip" onclick="setSearch('Nasi Cokelat')">Nasi Cokelat</div>
-                <div class="chip" onclick="setSearch('Roti Gandum Utuh')">Roti Gandum Utuh</div>
-                <div class="chip" onclick="setSearch('Salad Kacang Merah')">Salad Kacang Merah</div>
-                <div class="chip" onclick="setSearch('Sup Lentil')">Sup Lentil</div>
-                <div class="chip" onclick="setSearch('Talas Rebus')">Talas Rebus</div>
-                <div class="chip" onclick="setSearch('Telur Rebus Utuh')">Telur Rebus Utuh</div>
-                <div class="chip" onclick="setSearch('Apel Segar')">Apel Segar</div>
-                <div class="chip" onclick="setSearch('Quinoa Salad')">Quinoa Salad</div>
-                <div class="chip" onclick="setSearch('Tempe Panggang')">Tempe Panggang</div>
-                <div class="chip" onclick="setSearch('Sereal Gandum')">Sereal Gandum</div>
-            </div>
-        </div>
-
-        <!-- TAB MINUMAN UNIK (21 Item) -->
-        <div id="tab-minum" class="tab-content">
-            <div class="guide-desc">Rekomendasi minuman Nusantara yang menyehatkan, kaya rempah murni, dan berkhasiat unik.</div>
-            <div class="chips">
-                <div class="chip" onclick="setSearch('Wedang Uwuh')">Wedang Uwuh</div>
-                <div class="chip" onclick="setSearch('Jamu Kunyit Asam')">Kunyit Asam</div>
-                <div class="chip" onclick="setSearch('Bandrek Susu')">Bandrek Susu</div>
-                <div class="chip" onclick="setSearch('Bir Pletok')">Bir Pletok</div>
-                <div class="chip" onclick="setSearch('Es Daluman')">Es Daluman</div>
-                <div class="chip" onclick="setSearch('Wedang Ronde')">Wedang Ronde</div>
-                <div class="chip" onclick="setSearch('Jamu Beras Kencur')">Beras Kencur</div>
-                <div class="chip" onclick="setSearch('Bajigur')">Bajigur</div>
-                <div class="chip" onclick="setSearch('Wedang Jahe')">Wedang Jahe</div>
-                <div class="chip" onclick="setSearch('Teh Mahkota Dewa')">Teh Mahkota Dewa</div>
-                <div class="chip" onclick="setSearch('Sarabba')">Sarabba</div>
-                <div class="chip" onclick="setSearch('Es Lidah Buaya')">Es Lidah Buaya</div>
-                <div class="chip" onclick="setSearch('Es Kacang Merah')">Es Kacang Merah</div>
-                <div class="chip" onclick="setSearch('Jus Bit')">Jus Buah Bit</div>
-                <div class="chip" onclick="setSearch('Air Kelapa Muda')">Air Kelapa Muda</div>
-                <div class="chip" onclick="setSearch('Teh Talua')">Teh Talua</div>
-                <div class="chip" onclick="setSearch('Susu Kurma')">Susu Kurma</div>
-                <div class="chip" onclick="setSearch('Wedang Secang')">Wedang Secang</div>
-                <div class="chip" onclick="setSearch('Jamu Temulawak')">Temulawak</div>
-                <div class="chip" onclick="setSearch('Jamu Pahitan')">Jamu Pahitan</div>
-                <div class="chip" onclick="setSearch('Jus Alpukat')">Jus Alpukat</div>
-            </div>
-        </div>
+    <div class="tabs">
+      <button class="tab act-diet"  id="btn-diet"    onclick="switchTab('diet')">🥗 Mode diet</button>
+      <button class="tab"           id="btn-bulk"    onclick="switchTab('bulk')">💪 Mode bulking</button>
+      <button class="tab"           id="btn-kenyang" onclick="switchTab('kenyang')">🛡️ Kenyang lebih lama</button>
+      <button class="tab"           id="btn-minum"   onclick="switchTab('minum')">🍹 Minuman unik</button>
     </div>
 
-    <script>
-        function switchTab(mode) {
-            const tabs = ['diet', 'bulk', 'kenyang', 'minum'];
-            tabs.forEach(t => {
-                document.getElementById('tab-' + t).classList.remove('active');
-                document.getElementById('btn-' + t).classList.remove('active-' + t);
-            });
-            document.getElementById('tab-' + mode).classList.add('active');
-            document.getElementById('btn-' + mode).classList.add('active-' + mode);
-        }
+    <div class="tab-desc active" id="desc-diet">Fokus pada sayur, buah, dan protein tanpa lemak untuk defisit kalori harian yang sehat.</div>
+    <div class="tab-desc" id="desc-bulk">Fokus pada karbohidrat padat dan protein tinggi untuk memaksimalkan surplus kalori dan massa otot.</div>
+    <div class="tab-desc" id="desc-kenyang">Tinggi serat dan karbohidrat kompleks agar gula darah stabil dan perut menahan lapar berjam-jam.</div>
+    <div class="tab-desc" id="desc-minum">Rekomendasi minuman Nusantara yang menyehatkan, kaya rempah murni, dan berkhasiat unik.</div>
 
-        let daftarHarian = [];
+    <div class="tab-pane active" id="tab-diet">
+      <div class="chips">
+        <span class="chip" onclick="setSearch('Dada Ayam Rebus')">Dada Ayam Rebus</span>
+        <span class="chip" onclick="setSearch('Salad Sayur')">Salad Sayur</span>
+        <span class="chip" onclick="setSearch('Pepes Tahu')">Pepes Tahu</span>
+        <span class="chip" onclick="setSearch('Sup Tomat')">Sup Tomat</span>
+        <span class="chip" onclick="setSearch('Sayur Bening Bayam')">Sayur Bening Bayam</span>
+        <span class="chip" onclick="setSearch('Tumis Brokoli')">Tumis Brokoli</span>
+        <span class="chip" onclick="setSearch('Pepes Jamur')">Pepes Jamur</span>
+        <span class="chip" onclick="setSearch('Ikan Gurame Bakar')">Ikan Gurame Bakar</span>
+        <span class="chip" onclick="setSearch('Putih Telur Rebus')">Putih Telur Rebus</span>
+        <span class="chip" onclick="setSearch('Tumis Kangkung')">Tumis Kangkung</span>
+        <span class="chip" onclick="setSearch('Sup Ayam Bening')">Sup Ayam Bening</span>
+        <span class="chip" onclick="setSearch('Tahu Kukus')">Tahu Kukus</span>
+        <span class="chip" onclick="setSearch('Gado-Gado')">Gado-Gado</span>
+        <span class="chip" onclick="setSearch('Tumis Buncis')">Tumis Buncis</span>
+        <span class="chip" onclick="setSearch('Sapo Tahu')">Sapo Tahu</span>
+        <span class="chip" onclick="setSearch('Karedok')">Karedok</span>
+        <span class="chip" onclick="setSearch('Pecel Sayur')">Pecel Sayur</span>
+        <span class="chip" onclick="setSearch('Sayur Asem')">Sayur Asem</span>
+        <span class="chip" onclick="setSearch('Capcay Kuah')">Capcay Kuah</span>
+        <span class="chip" onclick="setSearch('Tumis Sawi Putih')">Tumis Sawi Putih</span>
+        <span class="chip" onclick="setSearch('Ayam Panggang Tanpa Kulit')">Ayam Panggang</span>
+      </div>
+    </div>
 
-        function parseAngka(str) {
-            let num = parseFloat(str.replace(/[^0-9.]/g, ''));
-            return isNaN(num) ? 0 : num;
-        }
+    <div class="tab-pane" id="tab-bulk">
+      <div class="chips">
+        <span class="chip" onclick="setSearch('Nasi Rendang')">Nasi Rendang</span>
+        <span class="chip" onclick="setSearch('Sate Kambing')">Sate Kambing</span>
+        <span class="chip" onclick="setSearch('Sapi Lada Hitam')">Sapi Lada Hitam</span>
+        <span class="chip" onclick="setSearch('Nasi Goreng Spesial')">Nasi Goreng Spesial</span>
+        <span class="chip" onclick="setSearch('Mie Goreng Telur')">Mie Goreng Telur</span>
+        <span class="chip" onclick="setSearch('Martabak Telur')">Martabak Telur</span>
+        <span class="chip" onclick="setSearch('Soto Betawi')">Soto Betawi</span>
+        <span class="chip" onclick="setSearch('Ayam Bakar Taliwang')">Ayam Bakar Taliwang</span>
+        <span class="chip" onclick="setSearch('Gule Kambing')">Gule Kambing</span>
+        <span class="chip" onclick="setSearch('Nasi Padang Tunjang')">Nasi Tunjang</span>
+        <span class="chip" onclick="setSearch('Ayam Geprek')">Ayam Geprek</span>
+        <span class="chip" onclick="setSearch('Nasi Kuning')">Nasi Kuning</span>
+        <span class="chip" onclick="setSearch('Roti Bakar Selai Kacang')">Roti Selai Kacang</span>
+        <span class="chip" onclick="setSearch('Smoothie Pisang Cokelat')">Smoothie Pisang</span>
+        <span class="chip" onclick="setSearch('Telur Dadar Padang')">Telur Dadar Padang</span>
+        <span class="chip" onclick="setSearch('Sate Padang')">Sate Padang</span>
+        <span class="chip" onclick="setSearch('Bebek Goreng')">Bebek Goreng</span>
+        <span class="chip" onclick="setSearch('Tongseng Sapi')">Tongseng Sapi</span>
+        <span class="chip" onclick="setSearch('Iga Bakar')">Iga Bakar</span>
+        <span class="chip" onclick="setSearch('Sop Buntut')">Sop Buntut</span>
+        <span class="chip" onclick="setSearch('Nasi Campur Bali')">Nasi Campur Bali</span>
+      </div>
+    </div>
 
-        function tambahKeDaftar() {
-            const nama = document.getElementById('food-title').innerText;
-            const kalori = parseAngka(document.getElementById('val-kalori').innerText);
-            const protein = parseAngka(document.getElementById('val-protein').innerText);
-            const karbo = parseAngka(document.getElementById('val-karbo').innerText);
-            const lemak = parseAngka(document.getElementById('val-lemak').innerText);
+    <div class="tab-pane" id="tab-kenyang">
+      <div class="chips">
+        <span class="chip" onclick="setSearch('Ubi Cilembu Panggang')">Ubi Cilembu</span>
+        <span class="chip" onclick="setSearch('Singkong Rebus')">Singkong Rebus</span>
+        <span class="chip" onclick="setSearch('Oatmeal Buah')">Oatmeal Buah</span>
+        <span class="chip" onclick="setSearch('Nasi Merah Dada Ayam')">Nasi Merah Ayam</span>
+        <span class="chip" onclick="setSearch('Bubur Kacang Hijau')">Bubur Kacang Hijau</span>
+        <span class="chip" onclick="setSearch('Alpukat Keruk')">Alpukat Keruk</span>
+        <span class="chip" onclick="setSearch('Jagung Rebus')">Jagung Rebus</span>
+        <span class="chip" onclick="setSearch('Chia Seed Pudding')">Chia Pudding</span>
+        <span class="chip" onclick="setSearch('Kentang Rebus')">Kentang Rebus</span>
+        <span class="chip" onclick="setSearch('Edamame Rebus')">Edamame Rebus</span>
+        <span class="chip" onclick="setSearch('Pisang Ambon')">Pisang Ambon</span>
+        <span class="chip" onclick="setSearch('Nasi Cokelat')">Nasi Cokelat</span>
+        <span class="chip" onclick="setSearch('Roti Gandum Utuh')">Roti Gandum Utuh</span>
+        <span class="chip" onclick="setSearch('Salad Kacang Merah')">Salad Kacang Merah</span>
+        <span class="chip" onclick="setSearch('Sup Lentil')">Sup Lentil</span>
+        <span class="chip" onclick="setSearch('Talas Rebus')">Talas Rebus</span>
+        <span class="chip" onclick="setSearch('Telur Rebus Utuh')">Telur Rebus Utuh</span>
+        <span class="chip" onclick="setSearch('Apel Segar')">Apel Segar</span>
+        <span class="chip" onclick="setSearch('Quinoa Salad')">Quinoa Salad</span>
+        <span class="chip" onclick="setSearch('Tempe Panggang')">Tempe Panggang</span>
+        <span class="chip" onclick="setSearch('Sereal Gandum')">Sereal Gandum</span>
+      </div>
+    </div>
 
-            daftarHarian.push({ nama, kalori, protein, karbo, lemak });
-            renderKeranjang();
+    <div class="tab-pane" id="tab-minum">
+      <div class="chips">
+        <span class="chip" onclick="setSearch('Wedang Uwuh')">Wedang Uwuh</span>
+        <span class="chip" onclick="setSearch('Jamu Kunyit Asam')">Kunyit Asam</span>
+        <span class="chip" onclick="setSearch('Bandrek Susu')">Bandrek Susu</span>
+        <span class="chip" onclick="setSearch('Bir Pletok')">Bir Pletok</span>
+        <span class="chip" onclick="setSearch('Es Daluman')">Es Daluman</span>
+        <span class="chip" onclick="setSearch('Wedang Ronde')">Wedang Ronde</span>
+        <span class="chip" onclick="setSearch('Jamu Beras Kencur')">Beras Kencur</span>
+        <span class="chip" onclick="setSearch('Bajigur')">Bajigur</span>
+        <span class="chip" onclick="setSearch('Wedang Jahe')">Wedang Jahe</span>
+        <span class="chip" onclick="setSearch('Teh Mahkota Dewa')">Teh Mahkota Dewa</span>
+        <span class="chip" onclick="setSearch('Sarabba')">Sarabba</span>
+        <span class="chip" onclick="setSearch('Es Lidah Buaya')">Es Lidah Buaya</span>
+        <span class="chip" onclick="setSearch('Es Kacang Merah')">Es Kacang Merah</span>
+        <span class="chip" onclick="setSearch('Jus Bit')">Jus Buah Bit</span>
+        <span class="chip" onclick="setSearch('Air Kelapa Muda')">Air Kelapa Muda</span>
+        <span class="chip" onclick="setSearch('Teh Talua')">Teh Talua</span>
+        <span class="chip" onclick="setSearch('Susu Kurma')">Susu Kurma</span>
+        <span class="chip" onclick="setSearch('Wedang Secang')">Wedang Secang</span>
+        <span class="chip" onclick="setSearch('Jamu Temulawak')">Temulawak</span>
+        <span class="chip" onclick="setSearch('Jamu Pahitan')">Jamu Pahitan</span>
+        <span class="chip" onclick="setSearch('Jus Alpukat')">Jus Alpukat</span>
+      </div>
+    </div>
 
-            const btn = document.getElementById('btn-tambah');
-            btn.innerHTML = '✅ Berhasil Ditambahkan!';
-            btn.classList.add('success');
-            
-            setTimeout(() => {
-                btn.innerHTML = '➕ Tambah ke Menu Harian';
-                btn.classList.remove('success');
-            }, 1500);
-        }
+  </div><!-- /guide-card -->
 
-        function hapusItem(index) {
-            daftarHarian.splice(index, 1);
-            renderKeranjang();
-        }
+</div><!-- /page -->
 
-        function renderKeranjang() {
-            const container = document.getElementById('cart-items');
-            if (daftarHarian.length === 0) {
-                container.innerHTML = '<p style="color: #64748b; font-size: 14px; text-align: center; margin-top: 20px;">Daftar makanan masih kosong.</p>';
-                updateTotal(0, 0, 0, 0);
-                return;
-            }
+<script>
+  /* ─── STATE ──────────────────────────────────── */
+  let daftarHarian = [];
+  let dataAktif    = null;
 
-            container.innerHTML = '';
-            let tKal = 0, tPro = 0, tKar = 0, tLem = 0;
+  /* ─── TAB SWITCH ─────────────────────────────── */
+  const tabModes = ['diet','bulk','kenyang','minum'];
+  const tabClass = { diet:'act-diet', bulk:'act-bulk', kenyang:'act-kenyang', minum:'act-minum' };
 
-            daftarHarian.forEach((item, index) => {
-                tKal += item.kalori; tPro += item.protein; tKar += item.karbo; tLem += item.lemak;
-                container.innerHTML += `
-                    <div class="cart-item">
-                        <div>
-                            <div class="cart-item-title">${item.nama}</div>
-                            <div class="cart-item-cals">${item.kalori} kcal</div>
-                        </div>
-                        <button class="btn-delete" onclick="hapusItem(${index})">X</button>
-                    </div>
-                `;
-            });
-            updateTotal(tKal, tPro, tKar, tLem);
-        }
+  function switchTab(mode) {
+    tabModes.forEach(m => {
+      document.getElementById('btn-'  + m).className = 'tab';
+      document.getElementById('tab-'  + m).classList.remove('active');
+      document.getElementById('desc-' + m).classList.remove('active');
+    });
+    document.getElementById('btn-'  + mode).classList.add(tabClass[mode]);
+    document.getElementById('tab-'  + mode).classList.add('active');
+    document.getElementById('desc-' + mode).classList.add('active');
+  }
 
-        function updateTotal(kal, pro, kar, lem) {
-            document.getElementById('tot-kal').innerText = kal.toFixed(1);
-            document.getElementById('tot-pro').innerText = pro.toFixed(1);
-            document.getElementById('tot-kar').innerText = kar.toFixed(1);
-            document.getElementById('tot-lem').innerText = lem.toFixed(1);
-        }
+  /* ─── SEARCH ─────────────────────────────────── */
+  document.getElementById('input-makanan').addEventListener('keypress', e => {
+    if (e.key === 'Enter') { e.preventDefault(); cariData(); }
+  });
 
-        document.getElementById('input-makanan').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                cariData();
-            }
-        });
+  function setSearch(makanan) {
+    document.getElementById('input-makanan').value = makanan;
+    cariData();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
-        function setSearch(makanan) {
-            document.getElementById('input-makanan').value = makanan;
-            cariData(); 
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+  async function cariData() {
+    const input = document.getElementById('input-makanan').value.trim();
+    if (!input) return;
 
-        async function cariData() {
-            const input = document.getElementById('input-makanan').value;
-            if (!input) return;
+    const errorEl  = document.getElementById('error-msg');
+    const resultEl = document.getElementById('result-card');
+    const loadEl   = document.getElementById('loading');
 
-            const errorMsg = document.getElementById('error-msg');
-            const resultDiv = document.getElementById('result');
-            const loading = document.getElementById('loading');
+    errorEl.style.display  = 'none';
+    resultEl.style.display = 'none';
+    loadEl.style.display   = 'block';
 
-            errorMsg.style.display = 'none';
-            resultDiv.style.display = 'none';
-            loading.style.display = 'block';
+    try {
+      const res  = await fetch('/api/nutrisi', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ makanan: input })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Kesalahan pada server API.');
 
-            try {
-                const response = await fetch('/api/nutrisi', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ makanan: input })
-                });
+      dataAktif = { ...data, nama: input };
 
-                const data = await response.json();
+      document.getElementById('food-title').textContent  = input.toUpperCase();
+      document.getElementById('val-kalori').textContent  = data.kalori      || '—';
+      document.getElementById('val-protein').textContent = data.protein     || '—';
+      document.getElementById('val-karbo').textContent   = data.karbohidrat || '—';
+      document.getElementById('val-lemak').textContent   = data.lemak       || '—';
+      document.getElementById('val-funfact').textContent = data.funfact     || 'Fakta unik belum tersedia untuk menu ini.';
 
-                if (!response.ok) throw new Error(data.error || 'Terjadi kesalahan pada server API.');
+      let resep = (data.resep || '').trim();
+      resep = resep.replace(/(Bahan-bahan:|Bahan:)/gi,         '🥗 $1\n');
+      resep = resep.replace(/(Cara membuat:|Langkah-langkah:|Cara Membuat:|Langkah:)/gi, '\n\n🍳 $1\n');
+      resep = resep.replace(/\.\s/g, '.\n');
+      document.getElementById('val-resep').textContent = resep;
 
-                document.getElementById('food-title').innerText = input.toUpperCase();
-                document.getElementById('val-kalori').innerText = data.kalori;
-                document.getElementById('val-protein').innerText = data.protein;
-                document.getElementById('val-karbo').innerText = data.karbohidrat;
-                document.getElementById('val-lemak').innerText = data.lemak;
-                
-                // Menampilkan Data Fun Fact
-                document.getElementById('val-funfact').innerText = data.funfact || "Deskripsi sejarah dan fakta unik belum tersedia untuk menu ini.";
+      const btnTambah = document.getElementById('btn-tambah');
+      btnTambah.classList.remove('added');
+      btnTambah.textContent = '➕ Tambah ke harian';
 
-                let teksResep = data.resep;
-                teksResep = teksResep.replace(/(Bahan-bahan:|Bahan:)/gi, "🥗 $1\n");
-                teksResep = teksResep.replace(/(Cara membuat:|Langkah-langkah:|Cara Membuat:|Langkah:)/gi, "\n\n🍳 $1\n");
-                teksResep = teksResep.replace(/\.\s/g, ".\n");
-                
-                document.getElementById('val-resep').innerText = teksResep.trim();
-                
-                loading.style.display = 'none';
-                resultDiv.style.display = 'block';
+      loadEl.style.display   = 'none';
+      resultEl.style.display = 'block';
 
-            } catch (error) {
-                console.error("Error Detail:", error);
-                loading.style.display = 'none';
-                errorMsg.innerText = "⚠️ " + error.message;
-                errorMsg.style.display = 'block';
-            }
-        }
-    </script>
+    } catch (err) {
+      loadEl.style.display  = 'none';
+      errorEl.textContent   = '⚠️ ' + err.message;
+      errorEl.style.display = 'block';
+    }
+  }
+
+  /* ─── CART ───────────────────────────────────── */
+  function parseAngka(str) {
+    const n = parseFloat(String(str).replace(/[^0-9.]/g, ''));
+    return isNaN(n) ? 0 : n;
+  }
+
+  function tambahKeDaftar() {
+    if (!dataAktif) return;
+    daftarHarian.push({
+      nama:    dataAktif.nama,
+      kalori:  parseAngka(dataAktif.kalori),
+      protein: parseAngka(dataAktif.protein),
+      karbo:   parseAngka(dataAktif.karbohidrat),
+      lemak:   parseAngka(dataAktif.lemak),
+    });
+    renderCart();
+
+    const btn = document.getElementById('btn-tambah');
+    btn.classList.add('added');
+    btn.textContent = '✅ Ditambahkan!';
+    setTimeout(() => {
+      btn.classList.remove('added');
+      btn.textContent = '➕ Tambah ke harian';
+    }, 1600);
+  }
+
+  function hapusItem(i) {
+    daftarHarian.splice(i, 1);
+    renderCart();
+  }
+
+  function renderCart() {
+    const container = document.getElementById('cart-items');
+    const countEl   = document.getElementById('cart-count');
+
+    if (daftarHarian.length === 0) {
+      container.innerHTML = `
+        <div class="cart-empty">
+          <div class="cart-empty-icon">🍽️</div>
+          Daftar masih kosong.<br>Cari makanan lalu tambahkan.
+        </div>`;
+      countEl.textContent = '0 item';
+      updateTotal(0,0,0,0);
+      return;
+    }
+
+    let tKal=0, tPro=0, tKar=0, tLem=0;
+    container.innerHTML = '';
+
+    daftarHarian.forEach((item, idx) => {
+      tKal += item.kalori; tPro += item.protein;
+      tKar += item.karbo;  tLem += item.lemak;
+      const div = document.createElement('div');
+      div.className = 'cart-item';
+      div.innerHTML = `
+        <div>
+          <div class="ci-name">${item.nama}</div>
+          <div class="ci-cal">${item.kalori} kcal</div>
+        </div>
+        <button class="btn-del" onclick="hapusItem(${idx})">✕</button>`;
+      container.appendChild(div);
+    });
+
+    countEl.textContent = daftarHarian.length + ' item';
+    updateTotal(tKal, tPro, tKar, tLem);
+  }
+
+  function updateTotal(kal, pro, kar, lem) {
+    document.getElementById('tot-kal').textContent = kal.toFixed(1);
+    document.getElementById('tot-pro').textContent = pro.toFixed(1);
+    document.getElementById('tot-kar').textContent = kar.toFixed(1);
+    document.getElementById('tot-lem').textContent = lem.toFixed(1);
+  }
+</script>
 </body>
 </html>
