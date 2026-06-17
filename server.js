@@ -24,9 +24,9 @@ app.post('/api/nutrisi', async (req, res) => {
             model: "llama-3.1-8b-instant",
             messages: [{ 
                 role: "user", 
-                content: `Berikan data gizi, deskripsi funfact (berisi asal daerah, waktu makan terbaik, dan fakta unik), serta resep singkat untuk porsi tunggal: ${makanan}. WAJIB jawab HANYA dengan format JSON persis seperti ini: {"kalori": "...", "protein": "...", "karbohidrat": "...", "lemak": "...", "funfact": "...", "resep": "..."}` 
+                content: `Berikan data gizi, deskripsi funfact singkat (asal daerah & fakta unik), serta resep untuk: ${makanan}. WAJIB jawab HANYA dalam format JSON persis seperti ini: {"kalori": "...", "protein": "...", "karbohidrat": "...", "lemak": "...", "funfact": "...", "resep": "..."}. PENTING: Jangan gunakan tanda kutip ganda (") atau enter/newline di dalam teks isi value JSON.` 
             }],
-            temperature: 0.2, 
+            temperature: 0.1, // Dibuat kecil biar AI nggak berhalusinasi aneh-aneh
             response_format: { type: "json_object" }
         }, {
             headers: { 
@@ -37,16 +37,27 @@ app.post('/api/nutrisi', async (req, res) => {
 
         const rawContent = groqResponse.data?.choices?.[0]?.message?.content;
         if (!rawContent) {
-            return res.status(500).json({ error: "Sistem AI Groq sedang tidak merespons. Coba lagi." });
+            throw new Error("Balasan AI kosong.");
         }
 
-        const jsonString = rawContent.replace(/```json/g, '').replace(/
-```/g, '').trim();
-        res.status(200).json(JSON.parse(jsonString));
+        // Pembersih JSON Anti-Crash
+        const jsonString = rawContent.replace(/```json/gi, '').replace(/```/g, '').trim();
+        
+        let parsedData;
+        try {
+            // Coba rakit JSON-nya
+            parsedData = JSON.parse(jsonString);
+        } catch (parseErr) {
+            // Kalau gagal, JANGAN CRASH. Kasih tau frontend aja.
+            console.error("JSON Error:", jsonString);
+            return res.status(500).json({ error: "AI meracik format yang salah. Silakan klik tombol Cari Data lagi." });
+        }
+
+        res.status(200).json(parsedData);
 
     } catch (error) {
-        console.error("Log Error Server:", error.message);
-        res.status(500).json({ error: "Gagal memproses data. Mesin AI kelebihan beban atau kunci API salah." });
+        console.error("Server API Error:", error.message);
+        res.status(500).json({ error: "Sistem AI sedang menyesuaikan diri atau sibuk. Coba lagi ya." });
     }
 });
 
