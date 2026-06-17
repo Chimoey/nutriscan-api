@@ -9,20 +9,21 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(process.cwd()));
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(process.cwd(), 'kalori.html'));
-});
-
 app.post('/api/nutrisi', async (req, res) => {
     const { makanan } = req.body; 
+    
+    if (!makanan) {
+        return res.status(400).json({ error: "Nama makanan tidak boleh kosong!" });
+    }
+
     try {
         const groqResponse = await axios.post('https://api.groq.com/openai/v1/chat/completions', {
             model: "llama-3.1-8b-instant",
             messages: [{ 
                 role: "user", 
-                content: `Berikan data gizi (Kalori dalam kcal, Protein dalam g, Karbohidrat dalam g, Lemak dalam g) dan resep untuk: ${makanan}. Jawab format JSON: {"kalori": "...", "protein": "...", "karbohidrat": "...", "lemak": "...", "resep": "..."}` 
+                content: `Berikan estimasi data gizi dan resep singkat untuk porsi tunggal: ${makanan}. WAJIB jawab hanya menggunakan format JSON persis seperti ini: {"kalori": "...", "protein": "...", "karbohidrat": "...", "lemak": "...", "resep": "..."}` 
             }],
-            temperature: 0.1,
+            temperature: 0.2, 
             response_format: { type: "json_object" }
         }, {
             headers: { 
@@ -31,13 +32,17 @@ app.post('/api/nutrisi', async (req, res) => {
             }
         });
 
+        // Pembersihan format dari Groq supaya JSON utuh
         const rawContent = groqResponse.data.choices[0].message.content;
-        const jsonString = rawContent.replace(/```json/g, '').replace(/
-```/g, '');
-        res.json(JSON.parse(jsonString));
+        const jsonString = rawContent.replace(/```json/g, '').replace(/```/g, '').trim();
+        
+        res.status(200).json(JSON.parse(jsonString));
+
     } catch (error) {
-        res.status(500).json({ error: "Mesin AI sedang sibuk." });
+        console.error("Error Groq API:", error.response ? error.response.data : error.message);
+        res.status(500).json({ error: "Sistem AI sedang sibuk. Pastikan GROQ_API_KEY sudah benar di Vercel." });
     }
 });
 
+// Wajib untuk Vercel Serverless Function
 module.exports = app;
