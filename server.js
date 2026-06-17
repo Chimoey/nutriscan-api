@@ -1,81 +1,39 @@
-import express from 'express';
-import cors from 'cors';
-import axios from 'axios';
-import path from 'path';
+const express = require('express');
+const cors = require('cors');
+const axios = require('axios');
+const path = require('path');
 
 const app = express();
 
-// ==========================================
-// 1. MIDDLEWARE WAJIB
-// ==========================================
 app.use(cors());
 app.use(express.json());
 app.use(express.static(process.cwd()));
 
-// ==========================================
-// 2. RUTE UTAMA TAMPILAN WEB
-// ==========================================
 app.get('/', (req, res) => {
     res.sendFile(path.join(process.cwd(), 'kalori.html'));
 });
 
-// ==========================================
-// 3. MESIN API NUTRISCAN (FATSECRET & GROQ)
-// ==========================================
 app.post('/api/nutrisi', async (req, res) => {
     const { makanan } = req.body; 
-
     try {
-        // --- A. PROSES FATSECRET ---
-        const credentials = Buffer.from(`${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64');
-        const tokenResponse = await axios.post('https://oauth.fatsecret.com/connect/token', 
-            'grant_type=client_credentials&scope=basic', {
-            headers: {
-                'Authorization': `Basic ${credentials}`,
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        });
-        const access_token = tokenResponse.data.access_token;
-
-        const fatsecretResponse = await axios.get('https://platform.fatsecret.com/rest/server.api', {
-            headers: { 'Authorization': `Bearer ${access_token}` },
-            params: {
-                method: 'foods.search',
-                search_expression: makanan,
-                format: 'json',
-                max_results: 1
-            }
-        });
-
-        // --- B. PROSES GROQ AI ---
         const groqResponse = await axios.post('https://api.groq.com/openai/v1/chat/completions', {
-           model: "llama-3.1-8b-instant",
-            messages: [
-                { 
-                    role: "user", 
-                    content: `Tolong berikan instruksi resep masakan yang singkat, sehat, dan jelas untuk membuat porsi tunggal: ${makanan}` 
-                }
-            ]
+            model: "llama-3.1-8b-instant",
+            messages: [{ 
+                role: "user", 
+                content: `Berikan data gizi (Kalori dalam kcal, Protein dalam g, Karbohidrat dalam g, Lemak dalam g) dan resep singkat untuk makanan: ${makanan}. Berikan jawaban dalam format JSON: {"kalori": "...", "protein": "...", "karbohidrat": "...", "lemak": "...", "resep": "..."}` 
+            }],
+            response_format: { type: "json_object" }
         }, {
-            headers: {
-                'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
-                'Content-Type': 'application/json'
+            headers: { 
+                'Authorization': `Bearer ${process.env.GROQ_API_KEY}`, 
+                'Content-Type': 'application/json' 
             }
         });
 
-        // --- C. KIRIM BALIK KE HTML ---
-        res.json({
-            nutrisi: fatsecretResponse.data,
-            resep: groqResponse.data.choices[0].message.content
-        });
-
+        res.json(JSON.parse(groqResponse.data.choices[0].message.content));
     } catch (error) {
-        console.error("Error API:", error.response ? error.response.data : error.message);
-        res.status(500).json({ error: "Mesin gagal terhubung ke satelit API." });
+        res.status(500).json({ error: "Mesin AI sedang sibuk." });
     }
 });
 
-// ==========================================
-// 4. EXPORT KHUSUS VERCEL (ES MODULE)
-// ==========================================
-export default app;
+module.exports = app;
