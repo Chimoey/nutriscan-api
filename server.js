@@ -67,8 +67,5 @@ app.post('/api/resep', async (req, res) => {
     }
 });
 
-// 👇 PORT DINAMIS: Wajib untuk Render.com
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-    console.log(`🚀 SERVER RENDER SIAP TEMPUR DI PORT ${PORT}!`);
-});
+// Jadikan ini sebagai Serverless Function untuk Vercel
+export default app;
