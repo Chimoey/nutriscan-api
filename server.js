@@ -49,7 +49,7 @@ app.post('/api/nutrisi', async (req, res) => {
 
         // --- B. PROSES GROQ AI ---
         const groqResponse = await axios.post('https://api.groq.com/openai/v1/chat/completions', {
-            model: "llama3-8b-8192",
+           model: "llama-3.1-8b-instant",
             messages: [
                 { 
                     role: "user", 
