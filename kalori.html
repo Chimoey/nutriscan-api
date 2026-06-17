@@ -7,8 +7,11 @@
     <style>
         body { 
             background-color: #0b110e; 
-            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-            background-size: 20px 20px;
+            /* Latar belakang jaring kotak-kotak murni CSS tanpa Canvas */
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
             color: #e2e8f0; 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             display: flex; flex-direction: column; align-items: center; padding: 50px 20px; 
@@ -113,7 +116,7 @@
             loading.style.display = 'block';
 
             try {
-                // MENDOBRAK PINTU DEPAN: Langsung pakai link absolut Vercel
+                // Link absolut Vercel untuk mendobrak sistem
                 const response = await fetch('https://nutriscan-api-eta.vercel.app/api/nutrisi', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
