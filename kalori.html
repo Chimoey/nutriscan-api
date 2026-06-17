@@ -113,8 +113,8 @@
             loading.style.display = 'block';
 
             try {
-                // JALUR RELATIF: Ini rahasianya biar Vercel nggak nyasar ke localhost!
-                const response = await fetch('/api/nutrisi', {
+                // MENDOBRAK PINTU DEPAN: Langsung pakai link absolut Vercel
+                const response = await fetch('https://nutriscan-api-eta.vercel.app/api/nutrisi', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ makanan: input })
@@ -125,7 +125,7 @@
                 const data = await response.json();
                 if (data.error) throw new Error(data.error);
 
-                // Tarik data spesifik dari FatSecret (Menyaring string deskripsi)
+                // Tarik data spesifik dari FatSecret
                 const foodInfo = data.nutrisi?.foods?.food?.[0];
                 const foodDesc = foodInfo ? foodInfo.food_description : "Kalori: 0kcal | Lemak: 0g | Karbo: 0g | Protein: 0g";
                 
