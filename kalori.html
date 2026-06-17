@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NutriScan - AI</title>
+    <title>NutriScan - AI & Tracker</title>
     <style>
         body { 
             background-color: #0b110e; 
@@ -16,62 +16,182 @@
         }
         .badge { background-color: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); color: #4ade80; padding: 8px 16px; border-radius: 20px; font-size: 14px; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 8px; }
         .badge::before { content: ''; width: 8px; height: 8px; background-color: #4ade80; border-radius: 50%; box-shadow: 0 0 8px #4ade80; }
-        h1 { font-size: 48px; margin: 0 0 10px 0; display: flex; align-items: center; gap: 10px; }
-        p.subtitle { color: #94a3b8; text-align: center; max-width: 600px; margin-bottom: 40px; line-height: 1.6; }
+        h1 { font-size: 48px; margin: 0 0 10px 0; display: flex; align-items: center; gap: 10px; text-align: center;}
+        p.subtitle { color: #94a3b8; text-align: center; max-width: 600px; margin-bottom: 30px; line-height: 1.6; }
         
         .search-box { display: flex; width: 100%; max-width: 600px; background-color: #111827; border: 1px solid #334155; border-radius: 30px; padding: 5px; margin-bottom: 20px; }
         input { flex: 1; background: transparent; border: none; color: white; padding: 15px 20px; font-size: 16px; outline: none; }
         button { background-color: #22c55e; color: #000; border: none; padding: 15px 30px; border-radius: 25px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; }
         button:hover { background-color: #16a34a; }
         
-        .chips { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 40px; }
-        .chip { border: 1px solid #334155; background: transparent; color: #94a3b8; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; transition: 0.3s; }
-        .chip:hover { border-color: #22c55e; color: #22c55e; }
+        /* Layout Panduan Gizi */
+        .guide-container { display: flex; gap: 20px; max-width: 800px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; }
+        .guide-box { background: #111827; border: 1px solid #334155; padding: 20px; border-radius: 15px; flex: 1; min-width: 300px; }
+        .guide-box h3 { margin-top: 0; color: #f8fafc; display: flex; align-items: center; gap: 8px; }
+        .guide-box p { font-size: 14px; color: #94a3b8; line-height: 1.5; margin-bottom: 15px; }
+        .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+        
+        .chip-diet { border: 1px solid #3b82f6; background: rgba(59, 130, 246, 0.1); color: #93c5fd; padding: 6px 12px; border-radius: 15px; cursor: pointer; font-size: 12px; transition: 0.3s; }
+        .chip-diet:hover { background: #3b82f6; color: #fff; }
+
+        .chip-bulk { border: 1px solid #ef4444; background: rgba(239, 68, 68, 0.1); color: #fca5a5; padding: 6px 12px; border-radius: 15px; cursor: pointer; font-size: 12px; transition: 0.3s; }
+        .chip-bulk:hover { background: #ef4444; color: #fff; }
         
         #error-msg { color: #ef4444; margin-top: 20px; font-size: 16px; display: none; text-align: center; background: rgba(239, 68, 68, 0.1); padding: 15px; border-radius: 10px; border: 1px solid rgba(239, 68, 68, 0.2); max-width: 600px; width: 100%; }
         #loading { color: #22c55e; margin-top: 20px; font-size: 16px; display: none; }
         
-        #result { margin-top: 30px; width: 100%; max-width: 600px; background: #111827; padding: 20px; border-radius: 15px; border: 1px solid #334155; display: none; }
+        /* Hasil & Keranjang */
+        .app-layout { display: flex; gap: 20px; max-width: 1000px; width: 100%; flex-wrap: wrap; justify-content: center; align-items: flex-start; }
+        
+        #result { width: 100%; max-width: 500px; background: #111827; padding: 20px; border-radius: 15px; border: 1px solid #334155; display: none; }
         .nutrisi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
         .nutrisi-box { background: #1e293b; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #334155; }
         .nutrisi-val { font-size: 24px; font-weight: bold; color: #22c55e; display: block; margin-top: 5px;}
-        pre { white-space: pre-wrap; font-family: inherit; color: #cbd5e1; line-height: 1.8; background: #1e293b; padding: 20px; border-radius: 10px; border: 1px solid #334155; }
+        pre { white-space: pre-wrap; font-family: inherit; color: #cbd5e1; line-height: 1.8; background: #1e293b; padding: 20px; border-radius: 10px; border: 1px solid #334155; max-height: 300px; overflow-y: auto;}
+        
+        .btn-add { background-color: #3b82f6; color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; margin-bottom: 20px; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px;}
+        .btn-add:hover { background-color: #2563eb; }
+
+        #cart-section { width: 100%; max-width: 450px; background: #111827; padding: 20px; border-radius: 15px; border: 1px solid #334155; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 10px 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #334155;}
+        .cart-item-title { font-weight: bold; color: #f8fafc; }
+        .cart-item-cals { color: #22c55e; font-size: 14px; }
+        .btn-delete { background: #ef4444; color: white; border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer; font-size: 12px;}
+        
+        .total-box { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); padding: 15px; border-radius: 10px; margin-top: 20px; }
+        .total-title { color: #4ade80; font-weight: bold; margin-bottom: 10px; font-size: 18px; text-align: center;}
+        .total-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center; }
+        .t-val { font-weight: bold; color: #fff; font-size: 16px; display: block;}
+        .t-lbl { color: #94a3b8; font-size: 12px; }
     </style>
 </head>
 <body>
     <div class="badge">Didukung Sepenuhnya oleh Groq AI</div>
     
     <h1>🌿 NutriScan</h1>
-    <p class="subtitle">Cari kandungan gizi makanan Nusantara secara instan, lalu dapatkan resep sehat yang diracik khusus oleh AI.</p>
+    <p class="subtitle">Cari kandungan gizi makanan Nusantara secara instan, hitung target harianmu, lalu dapatkan resep sehat yang diracik khusus oleh AI.</p>
     
     <div class="search-box">
-        <input type="text" id="input-makanan" placeholder="🔍 Masukkan nama makanan...">
+        <input type="text" id="input-makanan" placeholder="🔍 Masukkan nama makanan (cth: Tempe Bacem)...">
         <button onclick="cariData()">Cari Data</button>
     </div>
 
-    <div class="chips">
-        <div class="chip" onclick="setSearch('Nasi Goreng')">Nasi Goreng</div>
-        <div class="chip" onclick="setSearch('Rendang')">Rendang</div>
-        <div class="chip" onclick="setSearch('Soto Ayam')">Soto Ayam</div>
-        <div class="chip" onclick="setSearch('Gado-Gado')">Gado-Gado</div>
+    <div class="guide-container">
+        <div class="guide-box">
+            <h3>🥗 Panduan Diet (Defisit Kalori)</h3>
+            <p><strong>Target:</strong> 1500-1800 kcal. <br><strong>Fokus:</strong> Makanan utuh (Sayur, Buah). Dada ayam, ikan, tahu/tempe rebus untuk mengikat otot. Hindari minyak berlebih & gula.</p>
+            <div class="chips">
+                <div class="chip-diet" onclick="setSearch('Dada Ayam Rebus')">+ Dada Ayam</div>
+                <div class="chip-diet" onclick="setSearch('Salad Sayur')">+ Salad Sayur</div>
+                <div class="chip-diet" onclick="setSearch('Pepes Tahu')">+ Pepes Tahu</div>
+            </div>
+        </div>
+        <div class="guide-box">
+            <h3>💪 Panduan Bulking (Surplus Kalori)</h3>
+            <p><strong>Target:</strong> 2500-3000+ kcal. <br><strong>Fokus:</strong> Karbohidrat padat (Nasi, Kentang) untuk tenaga angkat beban. Daging sapi, telur, susu whey untuk membangun serat otot.</p>
+            <div class="chips">
+                <div class="chip-bulk" onclick="setSearch('Nasi Padang Rendang')">+ Nasi Rendang</div>
+                <div class="chip-bulk" onclick="setSearch('Sate Kambing')">+ Sate Kambing</div>
+                <div class="chip-bulk" onclick="setSearch('Susu Protein Whey')">+ Susu Whey</div>
+            </div>
+        </div>
     </div>
 
     <div id="error-msg"></div>
     <div id="loading">Otak AI sedang meracik data gizi dan resep... ⏳</div>
     
-    <div id="result">
-        <h3 id="food-title" style="margin-top:0; color: #4ade80; font-size: 24px;"></h3>
-        <div class="nutrisi-grid">
-            <div class="nutrisi-box">Kalori<span class="nutrisi-val" id="val-kalori">-</span></div>
-            <div class="nutrisi-box">Protein<span class="nutrisi-val" id="val-protein">-</span></div>
-            <div class="nutrisi-box">Karbohidrat<span class="nutrisi-val" id="val-karbo">-</span></div>
-            <div class="nutrisi-box">Lemak<span class="nutrisi-val" id="val-lemak">-</span></div>
+    <div class="app-layout">
+        <div id="result">
+            <h3 id="food-title" style="margin-top:0; color: #4ade80; font-size: 24px;"></h3>
+            <button class="btn-add" onclick="tambahKeDaftar()">➕ Tambah ke Menu Harian</button>
+            <div class="nutrisi-grid">
+                <div class="nutrisi-box">Kalori<span class="nutrisi-val"><span id="val-kalori">-</span></span></div>
+                <div class="nutrisi-box">Protein<span class="nutrisi-val"><span id="val-protein">-</span></span></div>
+                <div class="nutrisi-box">Karbo<span class="nutrisi-val"><span id="val-karbo">-</span></span></div>
+                <div class="nutrisi-box">Lemak<span class="nutrisi-val"><span id="val-lemak">-</span></span></div>
+            </div>
+            <h4 style="margin-bottom: 10px;">Instruksi Resep AI:</h4>
+            <pre id="val-resep"></pre>
         </div>
-        <h4 style="margin-bottom: 10px;">Instruksi Resep AI:</h4>
-        <pre id="val-resep"></pre>
+
+        <div id="cart-section">
+            <h3 style="margin-top:0; color: #f8fafc; border-bottom: 1px solid #334155; padding-bottom: 10px;">🛒 Daftar Menu Harian</h3>
+            <div id="cart-items">
+                <p style="color: #64748b; font-size: 14px; text-align: center; margin-top: 20px;">Daftar makanan masih kosong. Cari makanan dan klik tambah.</p>
+            </div>
+            
+            <div class="total-box">
+                <div class="total-title">Total Gizi Seharian</div>
+                <div class="total-grid">
+                    <div><span class="t-val" id="tot-kal">0</span><span class="t-lbl">kcal</span></div>
+                    <div><span class="t-val" id="tot-pro">0</span><span class="t-lbl">g Pro</span></div>
+                    <div><span class="t-val" id="tot-kar">0</span><span class="t-lbl">g Karbo</span></div>
+                    <div><span class="t-val" id="tot-lem">0</span><span class="t-lbl">g Lemak</span></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
+        // Logika Keranjang Harian
+        let daftarHarian = [];
+
+        function parseAngka(str) {
+            let num = parseFloat(str.replace(/[^0-9.]/g, ''));
+            return isNaN(num) ? 0 : num;
+        }
+
+        function tambahKeDaftar() {
+            const nama = document.getElementById('food-title').innerText;
+            const kalori = parseAngka(document.getElementById('val-kalori').innerText);
+            const protein = parseAngka(document.getElementById('val-protein').innerText);
+            const karbo = parseAngka(document.getElementById('val-karbo').innerText);
+            const lemak = parseAngka(document.getElementById('val-lemak').innerText);
+
+            daftarHarian.push({ nama, kalori, protein, karbo, lemak });
+            renderKeranjang();
+        }
+
+        function hapusItem(index) {
+            daftarHarian.splice(index, 1);
+            renderKeranjang();
+        }
+
+        function renderKeranjang() {
+            const container = document.getElementById('cart-items');
+            if (daftarHarian.length === 0) {
+                container.innerHTML = '<p style="color: #64748b; font-size: 14px; text-align: center; margin-top: 20px;">Daftar makanan masih kosong.</p>';
+                updateTotal(0, 0, 0, 0);
+                return;
+            }
+
+            container.innerHTML = '';
+            let tKal = 0, tPro = 0, tKar = 0, tLem = 0;
+
+            daftarHarian.forEach((item, index) => {
+                tKal += item.kalori; tPro += item.protein; tKar += item.karbo; tLem += item.lemak;
+                
+                container.innerHTML += `
+                    <div class="cart-item">
+                        <div>
+                            <div class="cart-item-title">${item.nama}</div>
+                            <div class="cart-item-cals">${item.kalori} kcal</div>
+                        </div>
+                        <button class="btn-delete" onclick="hapusItem(${index})">X</button>
+                    </div>
+                `;
+            });
+            updateTotal(tKal, tPro, tKar, tLem);
+        }
+
+        function updateTotal(kal, pro, kar, lem) {
+            document.getElementById('tot-kal').innerText = kal.toFixed(1);
+            document.getElementById('tot-pro').innerText = pro.toFixed(1);
+            document.getElementById('tot-kar').innerText = kar.toFixed(1);
+            document.getElementById('tot-lem').innerText = lem.toFixed(1);
+        }
+
+        // Logika Pencarian AI
         document.getElementById('input-makanan').addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
@@ -81,7 +201,7 @@
 
         function setSearch(makanan) {
             document.getElementById('input-makanan').value = makanan;
-            cariData();
+            cariData(); 
         }
 
         async function cariData() {
@@ -115,17 +235,11 @@
                 document.getElementById('val-karbo').innerText = data.karbohidrat;
                 document.getElementById('val-lemak').innerText = data.lemak;
 
-                // --- MANIPULASI TEKS AGAR RAPI ---
                 let teksResep = data.resep;
-                
-                // 1. Kasih jarak dan ikon untuk bagian utama
                 teksResep = teksResep.replace(/(Bahan-bahan:|Bahan:)/gi, "🥗 $1\n");
-                teksResep = teksResep.replace(/(Cara membuat:|Langkah-langkah:|Cara Membuat:)/gi, "\n\n🍳 $1\n");
-                
-                // 2. Tiap akhir kalimat (titik lalu spasi), diturunkan ke baris baru biar nggak numpuk
+                teksResep = teksResep.replace(/(Cara membuat:|Langkah-langkah:|Cara Membuat:|Langkah:)/gi, "\n\n🍳 $1\n");
                 teksResep = teksResep.replace(/\.\s/g, ".\n");
                 
-                // Tampilkan ke layar
                 document.getElementById('val-resep').innerText = teksResep.trim();
                 
                 loading.style.display = 'none';
