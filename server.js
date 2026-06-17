@@ -7,8 +7,13 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(process.cwd()));
 
+// 1. Rute Halaman Utama (Mencegah Error GET /)
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'kalori.html'));
+});
+
+// 2. Rute Mesin Pencari Gizi AI
 app.post('/api/nutrisi', async (req, res) => {
     const { makanan } = req.body; 
     
@@ -32,17 +37,21 @@ app.post('/api/nutrisi', async (req, res) => {
             }
         });
 
-        // Pembersihan format dari Groq supaya JSON utuh
+        // Pengaman ekstra jika Groq sedang bermasalah
+        if (!groqResponse.data || !groqResponse.data.choices || !groqResponse.data.choices[0]) {
+            throw new Error("Respon AI tidak valid.");
+        }
+
         const rawContent = groqResponse.data.choices[0].message.content;
-        const jsonString = rawContent.replace(/```json/g, '').replace(/```/g, '').trim();
+        const jsonString = rawContent.replace(/```json/g, '').replace(/
+```/g, '').trim();
         
         res.status(200).json(JSON.parse(jsonString));
 
     } catch (error) {
-        console.error("Error Groq API:", error.response ? error.response.data : error.message);
-        res.status(500).json({ error: "Sistem AI sedang sibuk. Pastikan GROQ_API_KEY sudah benar di Vercel." });
+        console.error("Error API:", error.message);
+        res.status(500).json({ error: "Sistem AI sedang sibuk atau API Key tidak valid." });
     }
 });
 
-// Wajib untuk Vercel Serverless Function
 module.exports = app;
