@@ -126,43 +126,10 @@
                 const data = await response.json();
                 if (data.error) throw new Error(data.error);
 
-                // --- LOGIKA BARU ANTI JEBAKAN FATSECRET ---
+                // --- LOGIKA PENANGKAP ANGKA TINGKAT DEWA ---
                 let foodData = data.nutrisi?.foods?.food;
                 let foodInfo = null;
                 
-                // Cek apakah hasilnya Array atau Object
                 if (Array.isArray(foodData)) {
                     foodInfo = foodData[0];
-                } else if (foodData) {
-                    foodInfo = foodData;
-                }
-
-                // Pelacak data bilingual (Inggris / Indonesia)
-                const foodDesc = foodInfo ? foodInfo.food_description : "Calories: 0kcal | Fat: 0g | Carbs: 0g | Protein: 0g";
-                
-                const kaloriMatch = foodDesc.match(/(?:Calories|Kalori):\s*([\d.]+)kcal/i);
-                const lemakMatch = foodDesc.match(/(?:Fat|Lemak):\s*([\d.]+)g/i);
-                const karboMatch = foodDesc.match(/(?:Carbs|Karbohidrat|Karbo):\s*([\d.]+)g/i);
-                const proteinMatch = foodDesc.match(/(?:Protein):\s*([\d.]+)g/i);
-
-                document.getElementById('food-title').innerText = foodInfo ? foodInfo.food_name : input;
-                document.getElementById('val-kalori').innerText = kaloriMatch ? kaloriMatch[1] + ' kcal' : '-';
-                document.getElementById('val-lemak').innerText = lemakMatch ? lemakMatch[1] + ' g' : '-';
-                document.getElementById('val-karbo').innerText = karboMatch ? karboMatch[1] + ' g' : '-';
-                document.getElementById('val-protein').innerText = proteinMatch ? proteinMatch[1] + ' g' : '-';
-                
-                document.getElementById('val-resep').innerText = data.resep;
-                
-                loading.style.display = 'none';
-                resultDiv.style.display = 'block';
-
-            } catch (error) {
-                console.error("Error:", error);
-                loading.style.display = 'none';
-                errorMsg.innerText = "Gagal terhubung ke server!";
-                errorMsg.style.display = 'block';
-            }
-        }
-    </script>
-</body>
-</html>
+                } else if (foodData
