@@ -19,7 +19,19 @@
         h1 { font-size: 48px; margin: 0 0 10px 0; display: flex; align-items: center; gap: 10px; text-align: center;}
         p.subtitle { color: #94a3b8; text-align: center; max-width: 600px; margin-bottom: 30px; line-height: 1.6; }
         
-        .search-box { display: flex; width: 100%; max-width: 600px; background-color: #111827; border: 1px solid #334155; border-radius: 30px; padding: 5px; margin-bottom: 20px; }
+        /* --- EFEK GLOW VERCEL DI KOTAK PENCARIAN --- */
+        .search-box { 
+            display: flex; width: 100%; max-width: 600px; background-color: #111827; 
+            border: 1px solid #334155; border-radius: 30px; padding: 5px; margin-bottom: 20px; 
+            transition: all 0.3s ease; /* Animasi transisi mulus */
+        }
+        /* Menyala saat di-hover atau saat ngetik (fokus) */
+        .search-box:hover, .search-box:focus-within {
+            border-color: #22c55e;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.2), 0 0 40px rgba(34, 197, 94, 0.05);
+            transform: translateY(-2px);
+        }
+
         input { flex: 1; background: transparent; border: none; color: white; padding: 15px 20px; font-size: 16px; outline: none; }
         button { background-color: #22c55e; color: #000; border: none; padding: 15px 30px; border-radius: 25px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; }
         button:hover { background-color: #16a34a; }
@@ -27,7 +39,6 @@
         #error-msg { color: #ef4444; margin-top: 20px; font-size: 16px; display: none; text-align: center; background: rgba(239, 68, 68, 0.1); padding: 15px; border-radius: 10px; border: 1px solid rgba(239, 68, 68, 0.2); max-width: 600px; width: 100%; }
         #loading { color: #22c55e; margin-top: 20px; font-size: 16px; display: none; }
         
-        /* --- LAYOUT GRID MENYAMPING --- */
         .app-layout { 
             display: grid; 
             grid-template-columns: 1.5fr 1fr;
@@ -44,7 +55,6 @@
         
         #result { background: #111827; padding: 25px; border-radius: 15px; border: 1px solid #334155; display: none; }
         
-        /* Keranjang Harian (Efek Sticky Dihapus) */
         #cart-section { 
             background: #111827; 
             padding: 25px; 
@@ -73,7 +83,6 @@
         .t-val { font-weight: bold; color: #fff; font-size: 16px; display: block;}
         .t-lbl { color: #94a3b8; font-size: 12px; }
 
-        /* Layout Panduan Gizi */
         .guide-container { width: 100%; max-width: 1100px; background: #111827; border: 1px solid #334155; border-radius: 15px; padding: 25px; text-align: center;}
         
         .mode-toggles { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
