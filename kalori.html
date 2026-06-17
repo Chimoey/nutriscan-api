@@ -115,7 +115,6 @@
             loading.style.display = 'block';
 
             try {
-                // JALUR RELATIF AMAN
                 const response = await fetch('/api/nutrisi', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -127,19 +126,30 @@
                 const data = await response.json();
                 if (data.error) throw new Error(data.error);
 
-                const foodInfo = data.nutrisi?.foods?.food?.[0];
-                const foodDesc = foodInfo ? foodInfo.food_description : "Kalori: 0kcal | Lemak: 0g | Karbo: 0g | Protein: 0g";
+                // --- LOGIKA BARU ANTI JEBAKAN FATSECRET ---
+                let foodData = data.nutrisi?.foods?.food;
+                let foodInfo = null;
                 
-                const kalori = foodDesc.match(/Kalori: ([\d.]+)kcal/);
-                const lemak = foodDesc.match(/Lemak: ([\d.]+)g/);
-                const karbo = foodDesc.match(/Karbo: ([\d.]+)g/);
-                const protein = foodDesc.match(/Protein: ([\d.]+)g/);
+                // Cek apakah hasilnya Array atau Object
+                if (Array.isArray(foodData)) {
+                    foodInfo = foodData[0];
+                } else if (foodData) {
+                    foodInfo = foodData;
+                }
+
+                // Pelacak data bilingual (Inggris / Indonesia)
+                const foodDesc = foodInfo ? foodInfo.food_description : "Calories: 0kcal | Fat: 0g | Carbs: 0g | Protein: 0g";
+                
+                const kaloriMatch = foodDesc.match(/(?:Calories|Kalori):\s*([\d.]+)kcal/i);
+                const lemakMatch = foodDesc.match(/(?:Fat|Lemak):\s*([\d.]+)g/i);
+                const karboMatch = foodDesc.match(/(?:Carbs|Karbohidrat|Karbo):\s*([\d.]+)g/i);
+                const proteinMatch = foodDesc.match(/(?:Protein):\s*([\d.]+)g/i);
 
                 document.getElementById('food-title').innerText = foodInfo ? foodInfo.food_name : input;
-                document.getElementById('val-kalori').innerText = kalori ? kalori[1] + ' kcal' : '-';
-                document.getElementById('val-lemak').innerText = lemak ? lemak[1] + ' g' : '-';
-                document.getElementById('val-karbo').innerText = karbo ? karbo[1] + ' g' : '-';
-                document.getElementById('val-protein').innerText = protein ? protein[1] + ' g' : '-';
+                document.getElementById('val-kalori').innerText = kaloriMatch ? kaloriMatch[1] + ' kcal' : '-';
+                document.getElementById('val-lemak').innerText = lemakMatch ? lemakMatch[1] + ' g' : '-';
+                document.getElementById('val-karbo').innerText = karboMatch ? karboMatch[1] + ' g' : '-';
+                document.getElementById('val-protein').innerText = proteinMatch ? proteinMatch[1] + ' g' : '-';
                 
                 document.getElementById('val-resep').innerText = data.resep;
                 
