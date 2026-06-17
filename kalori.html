@@ -30,30 +30,26 @@
         /* --- LAYOUT GRID MENYAMPING --- */
         .app-layout { 
             display: grid; 
-            grid-template-columns: 1.5fr 1fr; /* Kolom kiri lebih lebar */
+            grid-template-columns: 1.5fr 1fr;
             gap: 20px; 
             max-width: 1100px; 
             width: 100%; 
-            align-items: start; /* Supaya tinggi kotak nggak saling narik */
+            align-items: start;
             margin-bottom: 40px;
         }
 
-        /* Responsif: kalau layar HP, balik jadi atas-bawah */
         @media (max-width: 768px) {
             .app-layout { grid-template-columns: 1fr; }
-            #cart-section { position: static !important; }
         }
         
         #result { background: #111827; padding: 25px; border-radius: 15px; border: 1px solid #334155; display: none; }
         
-        /* Fitur Sticky untuk Keranjang */
+        /* Keranjang Harian (Efek Sticky Dihapus) */
         #cart-section { 
             background: #111827; 
             padding: 25px; 
             border-radius: 15px; 
             border: 1px solid #334155; 
-            position: sticky; 
-            top: 20px; 
         }
 
         .nutrisi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
@@ -61,7 +57,6 @@
         .nutrisi-val { font-size: 24px; font-weight: bold; color: #22c55e; display: block; margin-top: 5px;}
         pre { white-space: pre-wrap; font-family: inherit; color: #cbd5e1; line-height: 1.8; background: #1e293b; padding: 20px; border-radius: 10px; border: 1px solid #334155; max-height: 400px; overflow-y: auto;}
         
-        /* Tombol Tambah dengan Animasi */
         .btn-add { background-color: #3b82f6; color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; margin-bottom: 20px; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; gap: 8px;}
         .btn-add:hover { background-color: #2563eb; }
         .btn-add.success { background-color: #16a34a; transform: scale(0.98); }
@@ -78,10 +73,9 @@
         .t-val { font-weight: bold; color: #fff; font-size: 16px; display: block;}
         .t-lbl { color: #94a3b8; font-size: 12px; }
 
-        /* Layout Panduan Gizi (Di Bawah) */
+        /* Layout Panduan Gizi */
         .guide-container { width: 100%; max-width: 1100px; background: #111827; border: 1px solid #334155; border-radius: 15px; padding: 25px; text-align: center;}
         
-        /* Sistem Tab Mode */
         .mode-toggles { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
         .btn-mode { padding: 10px 20px; border-radius: 20px; border: 2px solid transparent; cursor: pointer; font-weight: bold; background: #1e293b; color: #94a3b8; transition: 0.3s; }
         .btn-mode.active-diet { background: rgba(59, 130, 246, 0.2); border-color: #3b82f6; color: #60a5fa; }
@@ -112,10 +106,7 @@
     <div id="error-msg"></div>
     <div id="loading">Otak AI sedang meracik data gizi dan resep... ⏳</div>
     
-    <!-- KALKULATOR & HASIL (GRID MENYAMPING) -->
     <div class="app-layout">
-        
-        <!-- BAGIAN KIRI: HASIL PENCARIAN -->
         <div id="result">
             <h3 id="food-title" style="margin-top:0; color: #4ade80; font-size: 26px;"></h3>
             
@@ -131,7 +122,6 @@
             <pre id="val-resep"></pre>
         </div>
 
-        <!-- BAGIAN KANAN: KERANJANG HARIAN (STICKY) -->
         <div id="cart-section">
             <h3 style="margin-top:0; color: #f8fafc; border-bottom: 1px solid #334155; padding-bottom: 15px;">🛒 Daftar Menu Harian</h3>
             <div id="cart-items">
@@ -148,10 +138,8 @@
                 </div>
             </div>
         </div>
-
     </div>
 
-    <!-- PANDUAN REKOMENDASI (SISTEM TAB) -->
     <div class="guide-container">
         <h2 style="margin-top: 0; color: #f8fafc; font-size: 20px;">Rekomendasi Menu Spesifik</h2>
         
@@ -160,7 +148,6 @@
             <button class="btn-mode" id="btn-bulk" onclick="switchTab('bulk')">💪 Mode Bulking</button>
         </div>
 
-        <!-- Konten Mode Diet -->
         <div id="tab-diet" class="tab-content active">
             <div class="guide-desc">
                 <strong>Target: 1500-1800 kcal.</strong> Fokus pada sayur, buah, dan protein tanpa lemak (dada ayam, ikan, tahu/tempe rebus) untuk membakar lemak namun mempertahankan otot.
@@ -184,7 +171,6 @@
             </div>
         </div>
 
-        <!-- Konten Mode Bulking -->
         <div id="tab-bulk" class="tab-content">
             <div class="guide-desc">
                 <strong>Target: 2500-3000+ kcal.</strong> Fokus pada karbohidrat padat (nasi, kentang) untuk tenaga beban, dan protein tinggi (sapi, telur, whey) untuk serat otot.
