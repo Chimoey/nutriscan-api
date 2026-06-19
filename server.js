@@ -20,7 +20,7 @@ app.post('/api/nutrisi', async (req, res) => {
             model: "llama-3.1-8b-instant",
             messages: [{ 
                 role: "user", 
-                content: `Berikan data gizi untuk ${makanan}. WAJIB jawab JSON format: {"kalori": "angka", "protein": "angka", "karbohidrat": "angka", "lemak": "angka", "funfact": "deskripsi singkat asal daerah dan fakta unik", "resep": "langkah masak"}. JANGAN kirim rentang angka (misal 250-300), berikan satu angka rata-rata saja.` 
+                content: `Berikan data gizi untuk ${makanan}. WAJIB jawab JSON format: {"kalori": "angka", "protein": "angka", "karbohidrat": "angka", "lemak": "angka", "funfact": "deskripsi singkat asal daerah dan fakta unik", "resep": "langkah masak singkat"}. JANGAN kirim rentang angka, berikan satu angka rata-rata saja.` 
             }],
             temperature: 0.1,
             response_format: { type: "json_object" }
@@ -28,14 +28,16 @@ app.post('/api/nutrisi', async (req, res) => {
             headers: { 
                 'Authorization': `Bearer ${process.env.GROQ_API_KEY}`, 
                 'Content-Type': 'application/json' 
-            }
+            },
+            timeout: 8500 // PENTING: Matikan paksa di 8.5 detik sebelum Vercel nge-crash (10 detik)
         });
 
         const rawContent = groqResponse.data.choices[0].message.content;
-        res.status(200).json(JSON.parse(rawContent.replace(/```json/gi, '').replace(/
-```/g, '').trim()));
+        res.status(200).json(JSON.parse(rawContent.replace(/```json/gi, '').replace(/```/g, '').trim()));
     } catch (error) {
-        res.status(500).json({ error: "Sistem AI sibuk, coba cari lagi." });
+        console.error(error.message);
+        // Kalau lelet, kirim pesan error rapi, JANGAN biarkan Vercel layar putih
+        res.status(500).json({ error: "AI sedang sibuk atau jaringan lelet. Silakan klik tombol Cari lagi." });
     }
 });
 
